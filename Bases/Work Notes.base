@@ -1,0 +1,21 @@
+filters:
+  and:
+    - 'file.ext == "md"'
+    - 'file.inFolder("Projects")'
+    - 'file.name != "STATUS"'
+formulas:
+  project: 'file.folder.replace(/^Projects\//, "").replace(/\/.*$/, "")'
+properties:
+  formula.project:
+    displayName: Project
+views:
+  - type: table
+    name: Recent work notes
+    limit: 20
+    order:
+      - file.name
+      - formula.project
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC

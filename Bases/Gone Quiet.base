@@ -1,0 +1,23 @@
+filters:
+  and:
+    - file.name == "STATUS"
+    - file.inFolder("Projects")
+    - status == "active"
+    - file.mtime < now() - "7d"
+formulas:
+  project: file.folder.replace(/^Projects\//, "").replace(/\/Active-Work.*$/, "")
+properties:
+  title:
+    displayName: Task
+  next:
+    displayName: Next step
+  formula.project:
+    displayName: Project
+views:
+  - type: table
+    name: Gone quiet
+    order:
+      - title
+      - formula.project
+      - file.mtime
+      - next

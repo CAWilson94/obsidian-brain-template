@@ -1,0 +1,22 @@
+filters:
+  and:
+    - file.name == "STATUS"
+    - file.inFolder("Projects")
+    - status != "done"
+    - if(blocked, blocked.lower().slice(0, 7) != "nothing", false)
+formulas:
+  project: file.folder.replace(/^Projects\//, "").replace(/\/Active-Work.*$/, "")
+properties:
+  title:
+    displayName: Task
+  blocked:
+    displayName: What is stopping it
+  formula.project:
+    displayName: Project
+views:
+  - type: table
+    name: Blocked
+    order:
+      - title
+      - formula.project
+      - blocked

@@ -16,6 +16,21 @@ cssclasses:
 >
 > ![[Projects Cards.base]]
 
+> [!card] 🚧 Blocked
+> What is stopping a task, so you can unblock it or ask.
+>
+> ![[Blocked.base]]
+
+> [!card] 💤 Gone Quiet
+> Active tasks nobody has touched for 7 days.
+>
+> ![[Gone Quiet.base]]
+
+> [!card] 📊 Stats
+> What moved this week, from my logged lines. [[Stats|Open the full page]].
+>
+> ![[Stats#This week vs last week]]
+
 > [!card] 🗓️ Dev Notes
 > ![[Recent Daily Notes.base]]
 

@@ -13,9 +13,9 @@ link:
 ---
 
 ## Goal
-> [!note] 🎯 What changes, for whom
+> [!note] 🎯 Y'know, what changes and for who
 
 ## Tasks in this epic
-> [!info] 🧩 Link each task note here
+> [!info] 🧩 The tasks that make this up, link them here
 
 ## Decisions

@@ -13,14 +13,14 @@ next:
 ---
 
 ## The idea
-> [!tip] 🧭 What is it, and what made you notice it?
+> [!tip] 🧭 Y'know, the shiny thing you spotted. What is it, and what made you notice it?
 
 ## Why it might be worth it
-> [!note] 🎯 Who benefits, what gets easier
+> [!note] 🎯 Who gets something out of this, and what gets easier
 
 ## First small step
-> [!example] 🪜 The smallest thing that would tell you if it is worth more time
+> [!example] 🪜 The smallest thing that would tell you if it is worth more of your time
 - [ ] 
 
 ## Notes
-> [!quote] 💭 Findings, links, dead ends
+> [!quote] 💭 Just notes, links and dead ends, stream of consciousness

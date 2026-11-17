@@ -9,27 +9,27 @@ tags: [<% tp.date.now("YYYY") %>]
 ---
 
 ## Stand-up
-> [!question] 🗣️ What I did, what I'm doing, what's blocking me
+> [!question] 🗣️ Stand-up stuff: what I did, what I'm up to, anything in the way
 
-## Tasks today
-> [!note] 🔗 Link the tasks you touched, like [[Some Task]]. They show up on each task's page.
+## Tasks I touched
+> [!note] 🧩 Link the tasks from today, like [[Some Task]], and they show up on each task's page
 
 ## Links
-> [!info] 🔗 Useful links from the day, to move to a mega link page later
+> [!info] 🔗 Y'know, useful links from the day that you should go and put in a mega link page..
 
 ## Deadlines
-> [!warning] ⏰ When things are due
+> [!warning] 🔗 When things are due
 
-## Rolling TODO
-> [!example] 📌 Rolling todo: carried over or ongoing
+## Rolling TODO:
+> [!example] 📌 Rolling Todo, carried over tasks or ongoing 🤸🏻
 - [ ] 
 
-## Daily TODO
-> [!success] 🎁 The daily todo: what's happening right now
+## Daily TODO:
+> [!success] 🎁 The daily todo, what's happening right now.
 - [ ] 
 
 ## Stream of Doing Notes
-> [!quote] 💭 Stream of consciousness, so future-you has a searchable memory
+> [!quote] 💭 Just notes from the day, stream of consciousness to pick up things and have a searchable memory
 
 **Open PRs:**
 

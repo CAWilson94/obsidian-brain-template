@@ -4,14 +4,17 @@ owner:
 tags: [meetings]
 ---
 
-## Questions Backlog
-> [!question] 🌈 Questions piling up
+# Questions Backlog
+> [!question] 🌈 y'know for questions you have piling up
 
-## General 1-2-1 Notes
-> [!tip] ✨ Notes that are always relevant, per person
+# General 1-2-1 Notes
+> [!tip] ✨ y'know for notes that are always relevant
 
-## Expectations (review cycle)
-> [!note] ✨ Expectations and review actions
+# 360 Expectations
+> [!note] ✨ 360 Expectations with your manager
 
-## Meetings
+> [!success] 🎊 Getting Better Feedback
+> Ask a specific question next time, like: "If you skim just the first 2-3 paragraphs, is the main takeaway obvious? If not, where would you change it?"
+
+# Meetings
 ![[One to Ones.base]]

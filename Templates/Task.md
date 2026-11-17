@@ -15,16 +15,18 @@ summary:
 ---
 
 ## Resources
-> [!info] 🔗 Links, test instances, dashboards, diagrams for this task
+> [!info] 🔗 Y'know, the links you keep needing: test instance, dashboards, Figma, that doc
 
 ## Initial Plan and Milestones
-> [!note] 🪨 Where this came from (ticket link), risks, the plan, milestone dates
-**Plan:**
+> [!note] 🪨 Where this came from (ticket link), the time-sink risks, the plan, and the milestone with a date
+**Current plan:**
 
-**Questions (answered / new):**
+**Question I had (answered):**
+
+**New question:**
 
 ## Points to Remember
-> [!tip] 🔨 Quick notes on implementation: things to not forget
+> [!tip] 🔨 Some quick notes on implementation
 ### Lifecycle and edge cases
 
 ### Failure and recovery

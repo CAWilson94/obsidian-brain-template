@@ -5,25 +5,25 @@ cssclasses:
 ![[banner.png]]
 
 # 📓 Home
-> [!tip] ✨ My work brain: tasks, daily notes, 1-2-1s. Create notes with Templater (`Alt+E`, or the command palette).
+> [!tip] ✨ Home, for y'know, work things. Make notes with Templater: Cmd+P, then "Templater: Create new note from template".
 
-## 🎉 Open Tasks
+## 🎉 Tasks n' Tickets
 ![[Open Tasks.base]]
 
-## 🧩 Epics
+## 🧩 Epics and Other
 ![[Epics.base]]
 
-## 🗓️ Daily Notes
+## 🗓️ Dev Notes
 ![[Recent Daily Notes.base]]
 
-## 💬 Meetings and 1-2-1s
+## 💬 Meeting Notes and 1-2-1s
 ![[One to Ones.base]]
 
 ## 🗺️ Side Quests
-> [!tip] 🧭 Ideas and tangents worth keeping, so they don't take over the main work
+> [!tip] 🧭 Y'know, the shiny things you spotted, kept here so they don't take over
 ![[Side Quests.base]]
 
-## 📚 Guides and Playbooks
+## 📚 Guides & Processes
 > [!info] 🪄 Link your own guides here, e.g. [[Debugging Playbook]]
 
 ## 🌱 Career Development

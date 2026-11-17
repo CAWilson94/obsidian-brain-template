@@ -1,0 +1,11 @@
+filters:
+  and:
+    - 'type == "project"'
+views:
+  - type: table
+    name: Projects
+    order:
+      - file.name
+      - status
+      - goal
+      - file.tags

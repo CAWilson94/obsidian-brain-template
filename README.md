@@ -15,6 +15,17 @@ A work-brain vault for Obsidian: a Home page with a banner, live tables of tasks
 - Link tasks from the daily note with `[[wikilinks]]`; each task lists the daily notes that mention it.
 - Filter by tags: add `tags: [ui, bug]` to a task, then add a filter in the Base.
 
+
+## Scripts (for AI and the terminal, no Obsidian needed)
+`scripts/brain.py` builds notes from the same Templater templates, so the headings never drift:
+- `python3 scripts/brain.py new daily` (also `side-quest "title"`, `epic "title"`, `1-2-1 Person`, `project Name`)
+- `python3 scripts/brain.py log "[finding] text"` appends a timestamped bullet to today's Daily Dev Note (tags: finding, decision, pr, blocked)
+- `python3 scripts/brain.py auto` logs changes to a task's `last_done`/`next` and new git commits. Run it from a hook to log with zero model tokens.
+Nothing is ever overwritten.
+
+## Tasks
+A task is a `STATUS.md` file in `Projects/<project>/Active-Work/<task>/`. Keep the properties in the `---` block, and wrap a value in 'single quotes' if it contains ": ". The Current Work table reads them; `Projects/Example-Project` shows the shape.
+
 ## Properties (frontmatter)
 | Note | Properties |
 |---|---|

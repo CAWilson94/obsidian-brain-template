@@ -1,0 +1,40 @@
+filters:
+  and:
+    - 'file.name == "STATUS"'
+    - 'file.inFolder("Projects")'
+    - 'status != "done"'
+formulas:
+  project: 'file.folder.replace(/^Projects\//, "").replace(/\/Active-Work.*$/, "")'
+properties:
+  title:
+    displayName: Task
+  next:
+    displayName: Next step
+  last_done:
+    displayName: Last done
+  formula.project:
+    displayName: Project
+views:
+  - type: table
+    name: By status
+    groupBy:
+      property: status
+      direction: ASC
+    order:
+      - title
+      - formula.project
+      - status
+      - next
+      - last_done
+      - file.mtime
+  - type: table
+    name: By project
+    groupBy:
+      property: formula.project
+      direction: ASC
+    order:
+      - title
+      - status
+      - next
+      - last_done
+      - file.mtime

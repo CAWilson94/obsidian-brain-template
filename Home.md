@@ -7,12 +7,17 @@ cssclasses:
 # 📓 Home
 > [!tip] ✨ Home, for y'know, work things. Make notes with Templater: Cmd+P, then "Templater: Create new note from template".
 
-## 🎉 Tasks n' Tickets
-![[Open Tasks.base]]
+## 🚦 Current Work
+> [!tip] 🧭 Live from each task's STATUS.md in Projects. Parked and active tasks, grouped by status.
+![[Current Work.base]]
+
+## 🗂️ Projects
+> [!tip] 🧭 Y'know, the big pieces of work. Each project's tasks are its STATUS.md files.
+![[Projects.base]]
 
 ## 🧩 Epics and Other
 ![[Epics.base]]
-
+~/Documents/ObsidianRecovered/Projects/entity-resolution/ER-rule-visibility-pitch-2026-11-17.md
 ## 🗓️ Dev Notes
 ![[Recent Daily Notes.base]]
 

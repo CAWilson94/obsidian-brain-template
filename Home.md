@@ -1,36 +1,36 @@
 ---
 cssclasses:
-  - home
+  - home-grid
 ---
 ![[banner.png]]
 
-# 📓 Home
-> [!tip] ✨ Home, for y'know, work things. Make notes with Templater: Cmd+P, then "Templater: Create new note from template".
+> [!intro] 📓 Home, for y'know, work things. Switch to Reading view (Cmd+E) to see the grid.
 
-## 🚦 Current Work
-> [!tip] 🧭 Live from each task's STATUS.md in Projects. Parked and active tasks, grouped by status.
-![[Current Work.base]]
+> [!card] 🚦 Current Work
+> Live from each task's STATUS.md.
+>
+> ![[Current Work Compact.base]]
 
-## 🗂️ Projects
-> [!tip] 🧭 Y'know, the big pieces of work. Each project's tasks are its STATUS.md files.
-![[Projects.base]]
+> [!card] 🗂️ Projects
+> The big pieces of work.
+>
+> ![[Projects Cards.base]]
 
-## 🧾 Work Notes
-> [!tip] 🧭 Handoffs, briefs and logs sitting inside project folders, newest first
-![[Work Notes.base]]
+> [!card] 🗓️ Dev Notes
+> ![[Recent Daily Notes.base]]
 
-## 🗓️ Dev Notes
-![[Recent Daily Notes.base]]
+> [!card] 🗺️ Side Quests
+> The shiny things you spotted.
+>
+> ![[Side Quests.base]]
 
-## 💬 Meeting Notes and 1-2-1s
-![[One to Ones.base]]
+> [!card] 💬 Meeting Notes and 1-2-1s
+> ![[One to Ones.base]]
 
-## 🗺️ Side Quests
-> [!tip] 🧭 Y'know, the shiny things you spotted, kept here so they don't take over
-![[Side Quests.base]]
+> [!card] 🧾 Work Notes
+> Handoffs, briefs and logs inside project folders.
+>
+> ![[Work Notes.base]]
 
-## 📚 Guides & Processes
-> [!info] 🪄 Link your own guides here, e.g. [[Debugging Playbook]]
-
-## 🌱 Career Development
-> [!info] 🌱 Link your notes here, e.g. [[Career Notes]]
+> [!card] 📚 Guides & Processes, 🌱 Career
+> Link your own guides and career notes here, e.g. [[Debugging Playbook]] and [[Career Notes]].

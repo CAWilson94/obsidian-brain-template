@@ -1,0 +1,13 @@
+filters:
+  and:
+    - type == "project"
+views:
+  - type: cards
+    name: Projects
+    filters:
+      and:
+        - status == "active"
+    order:
+      - file.name
+      - status
+      - file.tags

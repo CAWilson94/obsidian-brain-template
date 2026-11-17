@@ -1,0 +1,52 @@
+/* Notion-style grid for a note with `cssclasses: [home-grid]`. Works in READING view (Cmd+E). */
+.markdown-preview-view.home-grid {
+  --file-line-width: 1400px;
+}
+.home-grid .markdown-preview-sizer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+.home-grid .markdown-preview-sizer > div {
+  min-width: 0;
+}
+/* full-width blocks: banner, intro, wide cards, the pusher spacer */
+.home-grid .markdown-preview-sizer > div:has(.image-embed),
+.home-grid .markdown-preview-sizer > div:has(> .callout[data-callout="intro"]),
+.home-grid .markdown-preview-sizer > div:has(> .callout[data-callout="wide"]),
+.home-grid .markdown-preview-sizer > .markdown-preview-pusher {
+  grid-column: 1 / -1;
+}
+.home-grid .image-embed img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+/* cards */
+.home-grid .callout[data-callout="card"],
+.home-grid .callout[data-callout="wide"] {
+  --callout-color: 130, 150, 190;
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 14px;
+  padding: 12px 16px 16px;
+}
+.home-grid .callout[data-callout="card"] .callout-title,
+.home-grid .callout[data-callout="wide"] .callout-title {
+  font-size: 1.25em;
+  font-weight: 600;
+  padding: 0 0 8px;
+}
+.home-grid .callout[data-callout="intro"] {
+  --callout-color: 120, 190, 190;
+  border-radius: 14px;
+}
+
+/* hide the callout icon, keep the emoji in the title */
+.home-grid .callout[data-callout="card"] .callout-icon,
+.home-grid .callout[data-callout="wide"] .callout-icon,
+.home-grid .callout[data-callout="intro"] .callout-icon {
+  display: none;
+}

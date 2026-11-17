@@ -17,13 +17,6 @@ tags: [<% tp.date.now("YYYY") %>]
 ## Links
 > [!info] 🔗 Y'know, useful links from the day that you should go and put in a mega link page..
 
-## Deadlines
-> [!warning] 🔗 When things are due
-
-## Rolling TODO:
-> [!example] 📌 Rolling Todo, carried over tasks or ongoing 🤸🏻
-- [ ] 
-
 ## Daily TODO:
 > [!success] 🎁 The daily todo, what's happening right now.
 - [ ] 

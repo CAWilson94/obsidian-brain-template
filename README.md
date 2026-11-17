@@ -10,7 +10,7 @@ A work-brain vault for Obsidian: a Home page with a banner, live tables of tasks
 5. Open `Home`. Delete the `Examples` folder when you are ready.
 
 ## Daily use
-- New task / daily note / 1-2-1 / epic: command palette, "Templater: Create new note from template". Each gets a random emoji in its title that no other note title starts with. Change it by hand any time.
+- New task / daily note / 1-2-1 / epic / side quest: command palette, "Templater: Create new note from template". Each gets a random emoji in its title that no other note title starts with. Change it by hand any time.
 - Put notes in `Tasks`, `Daily`, `Meetings`, `Epics`. Tables find notes by the `type` property, not the folder.
 - Link tasks from the daily note with `[[wikilinks]]`; each task lists the daily notes that mention it.
 - Filter by tags: add `tags: [ui, bug]` to a task, then add a filter in the Base.
@@ -22,6 +22,7 @@ A work-brain vault for Obsidian: a Home page with a banner, live tables of tasks
 | Daily | type, date, tags |
 | 1-2-1 | type, person, date, tags |
 | Epic | type, status, tags, created, issue, link |
+| Side quest | type, status (Idea, Exploring, Done, Dropped), tags, created, why, next |
 
 ## Not verified yet (not tested inside Obsidian)
 - The `sort:` lines in the `.base` files (check: edit the sort in the Base UI and compare the saved file).

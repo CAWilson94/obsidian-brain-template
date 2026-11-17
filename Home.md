@@ -19,6 +19,10 @@ cssclasses:
 ## 💬 Meetings and 1-2-1s
 ![[One to Ones.base]]
 
+## 🗺️ Side Quests
+> [!tip] 🧭 Ideas and tangents worth keeping, so they don't take over the main work
+![[Side Quests.base]]
+
 ## 📚 Guides and Playbooks
 > [!info] 🪄 Link your own guides here, e.g. [[Debugging Playbook]]
 

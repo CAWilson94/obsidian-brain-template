@@ -1,0 +1,14 @@
+filters:
+  and:
+    - 'type == "side-quest"'
+    - 'status != "Done"'
+    - 'status != "Dropped"'
+views:
+  - type: table
+    name: Side quests
+    order:
+      - file.name
+      - status
+      - file.tags
+      - next
+      - created

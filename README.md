@@ -21,6 +21,7 @@ A work-brain vault for Obsidian: a Home page with a banner, live tables of tasks
 - `python3 scripts/brain.py new daily` (also `side-quest "title"`, `epic "title"`, `1-2-1 Person`, `project Name`)
 - `python3 scripts/brain.py log "[finding] text"` appends a timestamped bullet to today's Daily Dev Note (tags: finding, decision, pr, blocked)
 - `python3 scripts/brain.py auto` logs changes to a task's `last_done`/`next` and new git commits. Run it from a hook to log with zero model tokens.
+- `python3 scripts/brain.py stats` and `dashboard` rewrite `Stats.md` and `Dashboard.html` (a coloured, Notion-style page that opens in a browser). The hook runs both after `auto`.
 Nothing is ever overwritten.
 
 ## Tasks

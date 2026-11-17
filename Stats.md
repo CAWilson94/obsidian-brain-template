@@ -9,8 +9,25 @@ tags: [stats]
 ## This week vs last week
 | | Findings | Decisions | PRs | Blocked | Task updates | Commits | Days logged |
 |---|---|---|---|---|---|---|---|
-| This week | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| This week | 0 – | 0 – | 0 – | 0 – | 0 – | 0 – | 0 – |
 | Last week | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+## What moved this week
+| Task | Project | Last done / next step |
+|---|---|---|
+| none yet | | |
+
+## Where the work went (tasks that moved, by project)
+| Project | Tasks moved | |
+|---|---|---|
+| none yet | 0 | |
+
+## Tasks in flight
+**1 active** (a warning level of 4), 0 parked, 0 done.
+
+| Day | Active | Parked | |
+|---|---|---|---|
+| 2026-11-17 | 1 | 0 | ████████████████████ |
 
 ## Week by week
 | Week of | Days logged | Findings | Decisions | PRs | Blocked | Task updates | Commits | Total |
@@ -41,15 +58,6 @@ tags: [stats]
 | Fri 06 Nov | 0 |  |
 | Thu 05 Nov | 0 |  |
 | Wed 04 Nov | 0 |  |
-
-## Where things stand now
-| Status | Tasks |
-|---|---|
-| active | 1 |
-
-| Project | Active tasks |
-|---|---|
-| Example-Project | 1 |
 
 _No logged lines yet. Say "log this" or let the hook add [auto] lines._
 

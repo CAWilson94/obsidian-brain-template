@@ -6,7 +6,7 @@ A work-brain vault for Obsidian: a Home page with a banner, live tables of tasks
 1. Copy this repo (or "Use this template" on GitHub), then **Open folder as vault** in Obsidian (1.15 or newer; Bases is built in).
 2. Settings, Community plugins, turn off Restricted mode, install and enable **Templater**.
 3. Templater settings: set **Template folder location** to `Templates`.
-4. Settings, Appearance, CSS snippets: click reload, then enable `banner` and `home-grid`. Open `Home` in Reading view (Cmd+E) to see the two-column grid.
+4. Settings, Appearance, CSS snippets: click reload, then enable `banner`, `home-grid`, `notion-look` and `tag-colours`. Open `Home` in Reading view (Cmd+E) to see the two-column grid.
 5. Open `Home`. Delete the `Examples` folder when you are ready.
 
 ## Daily use

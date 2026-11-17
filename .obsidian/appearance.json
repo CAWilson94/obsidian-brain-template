@@ -1,1 +1,8 @@
-{"enabledCssSnippets":["banner","home-grid"]}
+{
+  "enabledCssSnippets": [
+    "banner",
+    "home-grid",
+    "notion-look",
+    "tag-colours"
+  ]
+}

@@ -1,0 +1,48 @@
+/* Notion-style look for Obsidian: coloured callouts, Notion type and spacing.
+   Tag colours come from tag-colours.css, written by `scripts/brain.py css`. */
+body.theme-light{
+  --nt-c0-b:#e3e2e0;--nt-c0-f:#32302c;--nt-c1-b:#eee0da;--nt-c1-f:#442a1e;--nt-c2-b:#fadec9;--nt-c2-f:#5c3b23;
+  --nt-c3-b:#fdecc8;--nt-c3-f:#402c1b;--nt-c4-b:#dbeddb;--nt-c4-f:#1c3829;--nt-c5-b:#d3e5ef;--nt-c5-f:#183347;
+  --nt-c6-b:#e8deee;--nt-c6-f:#412454;--nt-c7-b:#f5e0e9;--nt-c7-f:#4c2337;--nt-c8-b:#ffe2dd;--nt-c8-f:#5d1715;
+  --nt-code:#eb5757;
+}
+body.theme-dark{
+  --nt-c0-b:#373737;--nt-c0-f:#e6e6e4;--nt-c1-b:#603b2c;--nt-c1-f:#f1d9cd;--nt-c2-b:#854c1d;--nt-c2-f:#fbe3d0;
+  --nt-c3-b:#89632a;--nt-c3-f:#fdf0cf;--nt-c4-b:#2b593f;--nt-c4-f:#d5ecd9;--nt-c5-b:#28456c;--nt-c5-f:#d6e6f5;
+  --nt-c6-b:#492f64;--nt-c6-f:#e9dcf4;--nt-c7-b:#69314c;--nt-c7-f:#f7dfeb;--nt-c8-b:#6e3630;--nt-c8-f:#ffe0da;
+  --nt-code:#ff8a80;
+}
+
+/* type and spacing */
+body{
+  --font-text-theme:ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --font-interface-theme:ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --line-height-normal:1.65;
+  --h1-size:2.1em;--h1-weight:700;--h2-size:1.6em;--h2-weight:600;--h3-size:1.25em;--h3-weight:600;
+}
+.markdown-rendered h1,.markdown-source-view.mod-cm6 .cm-header-1{letter-spacing:-.5px}
+.markdown-rendered :not(pre)>code,.markdown-source-view.mod-cm6 .cm-inline-code{
+  color:var(--nt-code);background:var(--nt-c0-b);border-radius:4px;padding:0 .3em}
+.markdown-rendered hr{border-color:var(--background-modifier-border)}
+
+/* callouts: tinted block, rounded, no side bar; the emoji in the title is the icon */
+.callout{
+  mix-blend-mode:normal;border:0;border-radius:8px;padding:12px 16px;
+  background:var(--nt-c0-b);color:var(--nt-c0-f);
+}
+.callout .callout-icon{display:none}
+.callout .callout-title{color:inherit;font-weight:500;gap:0}
+.callout .callout-content{color:inherit;padding-top:2px}
+.callout[data-callout="note"],.callout[data-callout="quote"],.callout[data-callout="cite"]{background:var(--nt-c0-b);color:var(--nt-c0-f)}
+.callout[data-callout="info"],.callout[data-callout="abstract"],.callout[data-callout="summary"],.callout[data-callout="tldr"],.callout[data-callout="todo"]{background:var(--nt-c5-b);color:var(--nt-c5-f)}
+.callout[data-callout="tip"],.callout[data-callout="hint"],.callout[data-callout="success"],.callout[data-callout="check"],.callout[data-callout="done"]{background:var(--nt-c4-b);color:var(--nt-c4-f)}
+.callout[data-callout="question"],.callout[data-callout="help"],.callout[data-callout="faq"]{background:var(--nt-c6-b);color:var(--nt-c6-f)}
+.callout[data-callout="warning"],.callout[data-callout="caution"],.callout[data-callout="attention"]{background:var(--nt-c3-b);color:var(--nt-c3-f)}
+.callout[data-callout="example"]{background:var(--nt-c2-b);color:var(--nt-c2-f)}
+.callout[data-callout="important"]{background:var(--nt-c7-b);color:var(--nt-c7-f)}
+.callout[data-callout="danger"],.callout[data-callout="error"],.callout[data-callout="bug"],.callout[data-callout="failure"],.callout[data-callout="fail"],.callout[data-callout="missing"]{background:var(--nt-c8-b);color:var(--nt-c8-f)}
+
+/* tags: Notion-style rounded chips (colours per tag are in tag-colours.css) */
+a.tag,.cm-s-obsidian span.cm-hashtag{
+  background:var(--nt-c0-b);color:var(--nt-c0-f);border:0;border-radius:4px;padding:1px 7px;font-size:.85em}
+.multi-select-pill{background:var(--nt-c0-b);color:var(--nt-c0-f);border-radius:4px}

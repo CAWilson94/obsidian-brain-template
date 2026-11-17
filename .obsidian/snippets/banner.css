@@ -1,0 +1,8 @@
+/* Notion-style cover banner: add `cssclasses: [home]` to a note's properties */
+.home .internal-embed.image-embed img,
+.home .image-embed img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+}

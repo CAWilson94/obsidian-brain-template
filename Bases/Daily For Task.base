@@ -1,0 +1,10 @@
+filters:
+  and:
+    - 'type == "daily"'
+    - 'file.hasLink(this.file)'
+views:
+  - type: table
+    name: Daily notes mentioning this task
+    order:
+      - file.name
+      - date

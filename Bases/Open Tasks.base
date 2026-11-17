@@ -1,0 +1,16 @@
+filters:
+  and:
+    - 'type == "task"'
+    - 'status != "Done"'
+views:
+  - type: table
+    name: Open tasks
+    limit: 30
+    order:
+      - file.name
+      - status
+      - file.tags
+      - created
+    sort:
+      - property: created
+        direction: DESC

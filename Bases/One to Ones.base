@@ -1,0 +1,13 @@
+filters:
+  and:
+    - 'type == "one-to-one"'
+views:
+  - type: table
+    name: 1-2-1s
+    order:
+      - file.name
+      - person
+      - date
+    sort:
+      - property: date
+        direction: DESC

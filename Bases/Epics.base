@@ -1,0 +1,10 @@
+filters:
+  and:
+    - 'type == "epic"'
+views:
+  - type: table
+    name: Epics
+    order:
+      - file.name
+      - status
+      - file.tags

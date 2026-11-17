@@ -15,9 +15,10 @@ cssclasses:
 > [!tip] 🧭 Y'know, the big pieces of work. Each project's tasks are its STATUS.md files.
 ![[Projects.base]]
 
-## 🧩 Epics and Other
-![[Epics.base]]
-~/Documents/ObsidianRecovered/Projects/entity-resolution/ER-rule-visibility-pitch-2026-11-17.md
+## 🧾 Work Notes
+> [!tip] 🧭 Handoffs, briefs and logs sitting inside project folders, newest first
+![[Work Notes.base]]
+
 ## 🗓️ Dev Notes
 ![[Recent Daily Notes.base]]
 

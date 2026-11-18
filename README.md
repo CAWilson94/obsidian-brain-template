@@ -12,6 +12,7 @@ A work-brain vault for Obsidian: a Home page with a banner, live tables of tasks
 ## Daily use
 - New daily note / 1-2-1 / epic / side quest: command palette, "Templater: Create new note from template". Each gets a random emoji in its title that no other note title starts with. Change it by hand any time.
 - Put notes in `Daily`, `Meetings`, `Epics`, `SideQuests`. Tables find notes by the `type` property, not the folder.
+- **Today card on Home:** shows today's `## Daily TODO` ticks ("3 of 5 done"), the list, and tasks you closed this week. Unticked to-dos from the last daily note are copied into today's note once, the first time Home refreshes that day. Tick boxes in the daily note; Home follows within seconds if the watcher is on.
 - Link tasks from the daily note with `[[wikilinks]]`; each task lists the daily notes that mention it.
 - Filter by tags: add `tags: [ui, bug]` to a task, then add a filter in the Base.
 

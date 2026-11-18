@@ -808,9 +808,96 @@ def write_one_to_ones():
     return replace_home_block("o2o", lines or ["> No 1-2-1 notes yet."])
 
 
+TODO_RE = re.compile(r"^- \[( |x|X)\] (.+\S)\s*$")
+
+
+def todo_section(text):
+    """(start, end) line indexes of the `## Daily TODO` section's body in a daily note, or None."""
+    lines = text.split("\n")
+    for i, line in enumerate(lines):
+        if line.startswith("## Daily TODO"):
+            end = next((j for j in range(i + 1, len(lines)) if lines[j].startswith("## ")), len(lines))
+            return lines, i + 1, end
+    return None
+
+
+def todo_items(text):
+    found = todo_section(text)
+    if not found:
+        return []
+    lines, a, b = found
+    return [(m.group(1) != " ", m.group(2)) for m in (TODO_RE.match(l) for l in lines[a:b]) if m]
+
+
+def today_daily_note():
+    day = f"{date.today():%Y-%m-%d}"
+    notes = [f for d, f in daily_notes() if d == day and f.parent == BRAIN / "Daily"]
+    return notes[0] if notes else None
+
+
+def carry_over_todos(note):
+    """Once a day: copies unticked to-dos from the latest earlier daily note into today's note (skips text already there)."""
+    state = json.loads(STATE.read_text()) if STATE.exists() else {}
+    key = f"carry|{note.name}"
+    if state.get(key):
+        return 0
+    text = note.read_text(encoding="utf-8")
+    found = todo_section(text)
+    if not found:
+        return 0
+    day = f"{date.today():%Y-%m-%d}"
+    earlier = [f for d, f in daily_notes() if d < day and f.parent == BRAIN / "Daily"]
+    have = {s for _, s in todo_items(text)}
+    todo = [s for done, s in (todo_items(earlier[0].read_text(encoding="utf-8")) if earlier else []) if not done and s not in have]
+    state[key] = True
+    STATE.parent.mkdir(parents=True, exist_ok=True)
+    STATE.write_text(json.dumps(state, indent=1))
+    if not todo:
+        return 0
+    lines, a, b = found
+    insert = b
+    while insert > a and not lines[insert - 1].strip():
+        insert -= 1
+    lines[insert:insert] = [f"- [ ] {s}" for s in todo]
+    note.write_text("\n".join(lines), encoding="utf-8")
+    return len(todo)
+
+
+def write_today():
+    """Rewrites the Today card in Home.md (between td markers): progress on today's to-dos, the list, and what you closed this week."""
+    note = today_daily_note()
+    lines = []
+    if not note:
+        lines.append("> No note for today yet. Make one from the Daily Dev Note template. \U0001f331")
+    else:
+        carry_over_todos(note)
+        items = todo_items(note.read_text(encoding="utf-8"))
+        done = sum(1 for d, _ in items if d)
+        link = f"[[{note.relative_to(VAULT).with_suffix('').as_posix()}|open today's note]]"
+        if not items:
+            head = f"\U0001f4dd Nothing on today's list yet. {link} to add a few."
+        elif done == len(items):
+            head = f"\u2728 **All {len(items)} done!** \U0001f389 {link}"
+        elif done:
+            head = f"\U0001f389 **{done} of {len(items)} done**, keep going. {link}"
+        else:
+            head = f"\U0001f4aa **0 of {len(items)} done**, you've got this. {link}"
+        lines += [f"> {head}", ">"] + [f"> - {'✅' if d else '⬜'} {'~~' + s + '~~' if d else s}" for d, s in items]
+    week = []
+    for f in (VAULT / "Projects").glob("*/Finished-Work/*/STATUS.md"):
+        fm = read_fm(f)
+        m = re.match(r"(\d{4}-\d{2}-\d{2})", str(fm.get("last_done", "")))
+        when = m.group(1) if m else datetime.fromtimestamp(f.stat().st_mtime).strftime("%Y-%m-%d")
+        if (date.today() - date.fromisoformat(when)).days <= 7:
+            week.append((when, str(fm.get("title", f.parent.name))))
+    if week:
+        lines += [">", "> \U0001f3c6 **Closed this week**"] + [f"> - ✅ {title}" for _, title in sorted(week, reverse=True)[:6]]
+    return replace_home_block("td", lines)
+
+
 def write_home_lists():
     """Refreshes every generated list on Home: Projects, Blocked, Gone Quiet, Dev Notes, Side Quests, 1-2-1s."""
-    return any([write_project_pages(), write_projects(), write_blocked(), write_gone_quiet(), write_dev_notes(), write_side_quests(), write_one_to_ones()])
+    return any([write_today(), write_project_pages(), write_projects(), write_blocked(), write_gone_quiet(), write_dev_notes(), write_side_quests(), write_one_to_ones()])
 
 
 def write_current_work():

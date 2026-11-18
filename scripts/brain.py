@@ -816,7 +816,7 @@ def write_needs_you():
     note = f"GitHub last checked {cache['checked']}." if cache.get("checked") else "GitHub not checked yet: run `brain.py check` (needs `gh_repo` in `.brain.json`)."
     lines += [">", f"> <small>{note}</small>"]
     total = len(blocked) + len(quiet) + len(fixes)
-    retitle_card("\U0001f6a8 Needs you", f" \u00b7 {total}" if total else "")
+    retitle_card("\U0001f9ca Stuck n' Stale", f" \u00b7 {total}" if total else "")
     return replace_home_block("ny", lines)
 
 
@@ -1046,7 +1046,7 @@ def check_github():
 
 
 def write_needs_attention():
-    """Refreshes the Needs you card; returns (number of fields or PRs to fix, whether Home changed)."""
+    """Refreshes the Stuck n' Stale card; returns (number of fields or PRs to fix, whether Home changed)."""
     changed = write_needs_you()
     return len(fix_items()[0]), changed
 

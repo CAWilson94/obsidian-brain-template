@@ -31,7 +31,7 @@ cssclasses:
 > <!-- pj:start -->
 > <!-- pj:end -->
 
-> [!card] 🚨 Needs you
+> [!card] 🧊 Stuck n' Stale
 > <!-- ny:start -->
 > <!-- ny:end -->
 

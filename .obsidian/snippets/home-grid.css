@@ -93,6 +93,11 @@
 body.theme-light .markdown-preview-view.home-grid { --text-normal: #37352f; }
 .markdown-preview-view.home-grid { -webkit-font-smoothing: antialiased; }
 .home-grid .callout li > a.internal-link {
-  font-weight: 500;
-  border-bottom: 1px solid rgba(55, 53, 47, 0.25);
+  font-weight: 600;
+  color: var(--text-normal);
+  text-decoration: none;
 }
+/* no bullets: the emoji in each title is the marker */
+.home-grid .callout ul { list-style: none; padding-inline-start: 0; }
+.home-grid .callout li { list-style: none; }
+.home-grid .callout li::marker { content: ""; }

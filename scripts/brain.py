@@ -866,7 +866,7 @@ def carry_over_todos(note):
 def write_today():
     """Rewrites the Today card in Home.md (between td markers): progress on today's to-dos, the list, and what you closed this week."""
     note = today_daily_note()
-    lines = []
+    lines, items, done = [], [], 0
     if not note:
         lines.append("> No note for today yet. Make one from the Daily Dev Note template. \U0001f331")
     else:
@@ -892,6 +892,12 @@ def write_today():
             week.append((when, str(fm.get("title", f.parent.name))))
     if week:
         lines += [">", "> \U0001f3c6 **Closed this week**"] + [f"> - ✅ {title}" for _, title in sorted(week, reverse=True)[:6]]
+    title = "> [!card]- \U0001f3af Today" + (f" \u00b7 {done} of {len(items)} done" if note and items else "")
+    home = BRAIN / "Home.md"
+    text = home.read_text(encoding="utf-8")
+    retitled = re.sub(r"^> \[!card\]-? \U0001f3af Today.*$", lambda _: title, text, count=1, flags=re.M)
+    if retitled != text:
+        home.write_text(retitled, encoding="utf-8")
     return replace_home_block("td", lines)
 
 

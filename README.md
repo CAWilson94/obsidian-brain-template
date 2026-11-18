@@ -10,8 +10,8 @@ A work-brain vault for Obsidian: a Home page with a banner, live tables of tasks
 5. Open `Home`. Delete the `Examples` folder when you are ready.
 
 ## Daily use
-- New task / daily note / 1-2-1 / epic / side quest: command palette, "Templater: Create new note from template". Each gets a random emoji in its title that no other note title starts with. Change it by hand any time.
-- Put notes in `Tasks`, `Daily`, `Meetings`, `Epics`. Tables find notes by the `type` property, not the folder.
+- New daily note / 1-2-1 / epic / side quest: command palette, "Templater: Create new note from template". Each gets a random emoji in its title that no other note title starts with. Change it by hand any time.
+- Put notes in `Daily`, `Meetings`, `Epics`, `SideQuests`. Tables find notes by the `type` property, not the folder.
 - Link tasks from the daily note with `[[wikilinks]]`; each task lists the daily notes that mention it.
 - Filter by tags: add `tags: [ui, bug]` to a task, then add a filter in the Base.
 
@@ -29,6 +29,7 @@ Nothing is ever overwritten.
 | Skill | What it does |
 |---|---|
 | `log` | "log this": adds one tagged line to today's Daily Dev Note |
+| `new-project` | Starts a project (always asks for a goal) and adds a task to it when you ask |
 | `clean-notes` | Walks the Home "Needs attention" list one item at a time: tasks whose PR merged, empty project goals |
 | `cha-generic-review` | Reviews a GitHub PR against `rules/review-rules.md`. Edit those rules to your own |
 
@@ -66,13 +67,32 @@ Run `./install.sh` first (the SessionStart hook reads the path it saves). Then a
 - `install.sh` replaces an existing *link* with the same skill name, but skips a real folder.
 - Not tested yet: the three skills in a fresh Claude session.
 
+## Folder structure
+```
+Projects/
+  <Project>/
+    <Project>.md                 the project: goal, tags, a live table of its tasks
+    Active-Work/
+      <task-folder>/             one task = one folder
+        STATUS.md                the task's card (the fields the hook, Home and brain.py read)
+        BRIEF-<date>.md          anything else for that task, as needed
+        HANDOFF-<date>.md        handoff for a fresh session, in the same folder
+    Finished-Work/
+      <task-folder>/             a done task, moved here with `brain.py finish`
+```
+- **`STATUS.md` is the only file the tools read.** Everything else in the task folder is for you.
+- **One `STATUS.md` per task folder.** The folder name is the task's name, so every card is called `STATUS.md` on purpose.
+- **A handoff lives in its task folder** as `HANDOFF-YYYY-MM-DD.md`, and the task's `handoff:` field names the file (use `none` if there isn't one). Start one from `Templates/HANDOFF.md`.
+- **A done task moves to `Finished-Work/`.** Set `status: done`, then run `python3 scripts/brain.py finish <project> <task-folder>`: it moves the whole folder and fixes any links to it. `Active-Work/` then only holds live tasks, and `brain.py check` flags a done task left behind.
+- **Make them with `/new-project`** (a project, then a task when you ask), or copy `Templates/STATUS.md` into a new task folder by hand.
+
 ## Tasks
-A task is a `STATUS.md` file in `Projects/<project>/Active-Work/<task>/`. Keep the properties in the `---` block, and wrap a value in 'single quotes' if it contains ": ". The Current Work table reads them; `Projects/Example-Project` shows the shape.
+A task is a `STATUS.md` file in `Projects/<project>/Active-Work/<task>/`. Start from `Templates/STATUS.md` (copy it into a new task folder). `Templates/HANDOFF.md` is the matching handoff note for a fresh session. Keep the properties in the `---` block, and wrap a value in 'single quotes' if it contains ": ". The Current Work table reads them; `Projects/Example-Project` shows the shape.
 
 ## Properties (frontmatter)
 | Note | Properties |
 |---|---|
-| Task | type, status, tags, created, ticket, branch, pr, summary |
+| Task (`STATUS.md`) | title, pr, issue, links, status (active, parked, done), goal, last_done, next, blocked, handoff |
 | Daily | type, date, tags |
 | 1-2-1 | type, person, date, tags |
 | Epic | type, status, tags, created, issue, link |

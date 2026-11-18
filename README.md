@@ -38,18 +38,21 @@ STATUS.md also takes `pr: [123]` (PRs you raised), `issue: [url]` and `links: [u
 ## The whole workflow (one loop)
 | Step | What you do | What runs |
 |---|---|---|
-| 1. Start | Open a Claude Code session in your repo | Optional SessionStart hook lists your in-flight tasks (not included in this template) |
+| 1. Start | Open a Claude Code session in your repo | SessionStart hook `hooks/task-status.sh` lists your in-flight tasks (needs `jq`) |
 | 2. Work | Change a task's `STATUS.md` when something moves: `last_done`, `next`, `pr`, `issue`, `links` | Stop hook runs `brain.py auto`: logs the change to today's daily note as `[auto]` and refreshes Home |
 | 3. Capture | Say **"log this"** for a finding or decision | `log` skill adds one tagged line to the daily note |
 | 4. Tidy | When Home's **Needs attention** card is not empty, run `/clean-notes` | `brain.py check` refreshes it (the GitHub part needs `gh_repo` in `.brain.json` and the `gh` CLI logged in); the skill then goes through it one item at a time |
 | 5. Review | `/cha-generic-review <PR url>` | Reads `rules/review-rules.md` and the PR; posts nothing |
 | 6. Save | Commit the vault | Plain git |
 
-### Set up the Stop hook (so step 2 happens by itself)
-Add this to `~/.claude/settings.json` (merge it into any existing `hooks` block), with your own path:
+### Set up the hooks
+Run `./install.sh` first (the SessionStart hook reads the path it saves). Then add this to `~/.claude/settings.json` (merge it into any existing `hooks` block), with your own paths. `SessionStart` lists your tasks at the start of a session (step 1). `Stop` makes step 2 happen by itself.
 ```json
 {
   "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "/path/to/this-vault/hooks/task-status.sh" } ] }
+    ],
     "Stop": [
       { "hooks": [ { "type": "command", "command": "python3 -I /path/to/this-vault/scripts/brain.py auto >/dev/null 2>&1 || true" } ] }
     ]

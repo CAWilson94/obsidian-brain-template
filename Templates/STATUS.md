@@ -1,13 +1,14 @@
 ---
 # 📝 Obsidian reads this block as YAML: wrap a value in 'single quotes' if it contains ": " or starts with a backtick (double any inner ').
-# 🚦 status is one of: active, parked, done.   🔀 pr = PR numbers YOU raise, e.g. [123].   🎫 issue and 🔗 links take full URLs.
+# 🏷️ tags = the project tag, so Home colours the chip.   🚦 status is one of: active, parked, done.   🔀 pr = PR numbers YOU raise, e.g. [123].   🎫 issue and 🔗 links take full URLs.
 # ⚠️ Keep each field on one line with no "# comment" after the value: the hook and brain.py read the whole line.
 title: <plain-language name, 3 to 8 words; shown in the task list>
+tags: []
 pr: []
 issue: []
 links: []
 status: parked
-goal: <one line: what changes for whom>
+goal: <one line, what changes for whom>
 last_done: <the last thing you finished>
 next: <ONE concrete next step>
 blocked: <what is stopping it, or "nothing">

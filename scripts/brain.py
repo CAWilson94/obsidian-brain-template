@@ -46,9 +46,7 @@ def render(template_name, now, person=""):
 def new_note(kind, title=""):
     now = datetime.now()
     if kind == "project":
-        name = title or sys.exit("project needs a name")
-        path = VAULT / "Projects" / name / f"{name}.md"
-        body = f"---\ntype: project\nstatus: active\ntags: []\ngoal:\n---\n\n# {name}\n"
+        return make_project(title or sys.exit("project needs a name"))
     else:
         emoji = pick_emoji()
         if kind == "daily":
@@ -64,6 +62,63 @@ def new_note(kind, title=""):
         sys.exit(f"exists, not touching: {path}")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(body, encoding="utf-8")
+    return path
+
+
+def slugify(text):
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def yaml_value(value):
+    """Single-quotes a value when plain YAML would choke on it (': ', a leading symbol, ' #')."""
+    v = str(value).strip()
+    if v and (": " in v or " #" in v or v[0] in "[]{}&*!|>'\"%@`#,?-" or v.endswith(":")):
+        return "'" + v.replace("'", "''") + "'"
+    return v
+
+
+def make_project(name, goal="", tags=None):
+    """Creates Projects/<name>/<name>.md (with a goal and a tasks table) and an empty Active-Work folder."""
+    folder = VAULT / "Projects" / name
+    path = folder / f"{name}.md"
+    if path.exists():
+        sys.exit(f"exists, not touching: {path}")
+    tag_list = tags if tags is not None else [slugify(name)]
+    body = (f"---\ntype: project\nstatus: active\ntags: [{', '.join(tag_list)}]\ngoal: {yaml_value(goal)}\n---\n\n# {name}\n"
+            "> [!info] \U0001f5fa\ufe0f Y'know, what this project is for and where its tasks live. Tasks are the STATUS.md files in `Active-Work/`.\n\n"
+            "## \U0001f6a6 Tasks in this project\n![[Project Tasks.base]]\n")
+    (folder / "Active-Work").mkdir(parents=True, exist_ok=True)
+    path.write_text(body, encoding="utf-8")
+    return path
+
+
+def make_task(project, title, goal, next_step=""):
+    """Creates Projects/<project>/Active-Work/<slug>/STATUS.md from Templates/STATUS.md, active, tagged with the project's tags."""
+    project_file = VAULT / "Projects" / project / f"{project}.md"
+    if not project_file.exists():
+        sys.exit(f"no such project: {project_file}")
+    tags = read_fm(project_file).get("tags")
+    tags = tags if isinstance(tags, list) else []
+    path = VAULT / "Projects" / project / "Active-Work" / slugify(title) / "STATUS.md"
+    if path.exists():
+        sys.exit(f"exists, not touching: {path}")
+    template = BRAIN / "Templates" / "STATUS.md"
+    if not template.exists():
+        sys.exit(f"missing template: {template}")
+    today = date.today().isoformat()
+    values = {"title": f"{emoji_for(title)} {title}", "tags": f"[{', '.join(tags)}]", "status": "active", "goal": goal,
+              "last_done": f"Task created on {today}", "next": next_step or "write the first next step", "blocked": "nothing",
+              "handoff": "none"}
+    out, dashes = [], 0
+    for line in template.read_text(encoding="utf-8").split("\n"):
+        if line.strip() == "---":
+            dashes += 1
+        m = re.match(r"^([A-Za-z_][\w-]*):", line) if dashes == 1 else None
+        if m and m.group(1) in values:
+            line = f"{m.group(1)}: {yaml_value(values[m.group(1)])}" if m.group(1) != "tags" else f"tags: {values['tags']}"
+        out.append(line.replace("### YYYY-MM-DD", f"### {today}"))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(out), encoding="utf-8")
     return path
 
 
@@ -647,6 +702,10 @@ if __name__ == "__main__":
         print(new_note(args[0], " ".join(args[1:])))
     elif cmd == "log" and args:
         print(append_log(" ".join(args)))
+    elif cmd == "project" and args:
+        print(make_project(args[0], args[1] if len(args) > 1 else ""))
+    elif cmd == "task" and len(args) >= 3:
+        print(make_task(args[0], args[1], args[2], args[3] if len(args) > 3 else ""))
     elif cmd == "stats":
         print("Stats.md rewritten" if write_stats() else "Stats.md unchanged")
     elif cmd == "dashboard":

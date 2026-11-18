@@ -1,0 +1,18 @@
+filters:
+  and:
+    - 'file.name == "STATUS"'
+    - 'file.inFolder(this.file.folder)'
+    - 'status != "done"'
+properties:
+  title:
+    displayName: Task
+  next:
+    displayName: Next step
+views:
+  - type: table
+    name: Tasks in this project
+    order:
+      - title
+      - status
+      - next
+      - file.mtime

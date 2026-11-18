@@ -29,6 +29,7 @@ Nothing is ever overwritten.
 | Skill | What it does |
 |---|---|
 | `log` | "log this": adds one tagged line to today's Daily Dev Note |
+| `new-project` | Starts a project (always asks for a goal) and adds a task to it when you ask |
 | `clean-notes` | Walks the Home "Needs attention" list one item at a time: tasks whose PR merged, empty project goals |
 | `cha-generic-review` | Reviews a GitHub PR against `rules/review-rules.md`. Edit those rules to your own |
 

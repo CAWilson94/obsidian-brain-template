@@ -1,5 +1,8 @@
 ---
 title: Example task
+pr: []
+issue: []
+links: []
 status: active
 goal: A fictional task so the Current Work table has a row
 last_done: Set up the vault

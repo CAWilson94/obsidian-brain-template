@@ -10,9 +10,17 @@ cssclasses:
 > [!card] 🚦 Current Work
 > Live from each task's STATUS.md.
 >
-> ![[Current Work Compact.base]]
+> <!-- cw:start -->
+>
+> **active**
+>
+> - [[Projects/Example-Project/Active-Work/example-task/STATUS|Example task]]
+> <!-- cw:end -->
 
-> [!card] 🗂️ Projects
+> [!card] 🗓️ Dev Notes
+> ![[Recent Daily Notes.base]]
+
+> [!card|first-right] 🗂️ Projects
 > The big pieces of work.
 >
 > ![[Projects Cards.base]]
@@ -27,13 +35,14 @@ cssclasses:
 >
 > ![[Gone Quiet.base]]
 
-> [!card] 📊 Stats
-> What moved this week, from my logged lines. [[Stats|Open the full page]].
+> [!card] 🧭 Needs attention
+> Fields to fix and PRs that have moved on. Refresh with `python3 scripts/brain.py check`.
 >
-> ![[Stats#This week vs last week]]
-
-> [!card] 🗓️ Dev Notes
-> ![[Recent Daily Notes.base]]
+> <!-- chk:start -->
+> Nothing to fix. 🎉
+>
+> *GitHub not checked yet: run `brain.py check` (needs `gh_repo` in `.brain.json`).*
+> <!-- chk:end -->
 
 > [!card] 🗺️ Side Quests
 > The shiny things you spotted.
@@ -42,11 +51,6 @@ cssclasses:
 
 > [!card] 💬 Meeting Notes and 1-2-1s
 > ![[One to Ones.base]]
-
-> [!card] 🧾 Work Notes
-> Handoffs, briefs and logs inside project folders.
->
-> ![[Work Notes.base]]
 
 > [!card] 📚 Guides & Processes, 🌱 Career
 > Link your own guides and career notes here, e.g. [[Debugging Playbook]] and [[Career Notes]].

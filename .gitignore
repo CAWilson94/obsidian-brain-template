@@ -2,3 +2,5 @@
 .obsidian/workspace*.json
 .obsidian/plugins/
 .stats_history.json
+.check_gh.json
+__pycache__/

@@ -416,7 +416,7 @@ def build_dashboard(today=None):
     this, last = s["weeks"][0], s["weeks"][1]
 
     def cls(text):
-        return int(hashlib.md5(text.encode()).hexdigest(), 16) % 9
+        return int(hashlib.md5(text.encode()).hexdigest(), 16) % 8 + 1
 
     def chip(tag):
         return f'<span class="chip c{cls(tag)}">{esc(tag)}</span>'
@@ -507,6 +507,118 @@ def write_dashboard():
     return True
 
 
+def gh_repo():
+    """The GitHub repo (owner/name) your PR numbers belong to, from `.brain.json` at the vault root. Empty means no PR links and no GitHub check."""
+    try:
+        return str(json.loads((VAULT / ".brain.json").read_text(encoding="utf-8")).get("gh_repo", "") or "")
+    except (OSError, ValueError):
+        return ""
+
+
+def write_current_work():
+    """Rewrites the Current Work list inside Home.md (between cw markers) with real #tags so tag-colours.css colours them."""
+    groups = {}
+    for f in sorted((VAULT / "Projects").rglob("STATUS.md")):
+        if "Active-Work" not in f.parts:
+            continue
+        fm = read_fm(f)
+        status = str(fm.get("status", "") or "").lower()
+        if status in ("done", ""):
+            continue
+        tags = fm.get("tags") if isinstance(fm.get("tags"), list) else []
+        label = " ".join("#" + str(x).lstrip("#") for x in tags if x)
+        prs = fm.get("pr") if isinstance(fm.get("pr"), list) else []
+        repo = gh_repo()
+        label += "".join(f" [PR #{n}](https://github.com/{repo}/pull/{n})" if repo else f" PR #{n}" for n in prs)
+        issues = fm.get("issue") if isinstance(fm.get("issue"), list) else []
+        label += "".join(f" [Issue #{u.rstrip('/').rsplit('/', 1)[-1]}]({u})" for u in issues)
+        title = str(fm.get("title", f.parent.name))
+        groups.setdefault(status, []).append(f"> - [[{f.relative_to(VAULT).with_suffix('').as_posix()}|{title}]] {label}".rstrip())
+    lines = ["> <!-- cw:start -->"]
+    for status in sorted(groups):
+        lines += [">", f"> **{status}**", ">"] + groups[status]
+    lines.append("> <!-- cw:end -->")
+    path = BRAIN / "Home.md"
+    text = path.read_text(encoding="utf-8")
+    new = re.sub(r"> <!-- cw:start -->.*?> <!-- cw:end -->", lambda _: "\n".join(lines), text, flags=re.S)
+    if new == text:
+        return False
+    path.write_text(new, encoding="utf-8")
+    return True
+
+
+CHECK_CACHE = BRAIN / ".check_gh.json"
+
+
+def check_offline():
+    """Field problems that need no network: missing fields, bad pr values, project files with no goal."""
+    found = []
+    for f in sorted((VAULT / "Projects").rglob("STATUS.md")):
+        if "Active-Work" not in f.parts:
+            continue
+        fm = read_fm(f)
+        name = str(fm.get("title", f.parent.name))
+        if str(fm.get("status", "")).lower() == "done":
+            continue
+        for key in ("title", "status", "goal", "next"):
+            if not fm.get(key):
+                found.append(f"{name}: **{key}** is empty")
+        for n in fm.get("pr", []) if isinstance(fm.get("pr"), list) else []:
+            if not str(n).isdigit():
+                found.append(f"{name}: `pr:` holds `{n}`, which is not a PR number (use `issue:` or `links:` for URLs)")
+    for d in sorted((VAULT / "Projects").glob("*/")):
+        for f in d.glob("*.md"):
+            fm = read_fm(f)
+            if fm.get("type") == "project":
+                if not fm.get("goal"):
+                    found.append(f"Project {d.name}: **goal** is empty")
+                break
+    return found
+
+
+def check_github():
+    """Asks GitHub about every `pr:` number and caches the problems in Brain/.check_gh.json."""
+    found = []
+    repo = gh_repo()
+    if not repo:
+        return found
+    for f in sorted((VAULT / "Projects").rglob("STATUS.md")):
+        if "Active-Work" not in f.parts:
+            continue
+        fm = read_fm(f)
+        name = str(fm.get("title", f.parent.name))
+        status = str(fm.get("status", "")).lower()
+        for n in fm.get("pr", []) if isinstance(fm.get("pr"), list) else []:
+            if not str(n).isdigit():
+                continue
+            r = subprocess.run(["gh", "pr", "view", str(n), "-R", repo, "--json", "state"],
+                               capture_output=True, text=True)
+            if r.returncode != 0:
+                found.append(f"{name}: #{n} is not a PR in {repo} (is it an issue?)")
+                continue
+            state = json.loads(r.stdout).get("state")
+            if state in ("MERGED", "CLOSED") and status == "active":
+                found.append(f"{name}: PR #{n} is {state.lower()} but the task is still active, so check `next` and `blocked`")
+    CHECK_CACHE.write_text(json.dumps(dict(checked=str(date.today()), found=found)), encoding="utf-8")
+    return found
+
+
+def write_needs_attention():
+    """Rewrites the Needs attention list in Home.md (between chk markers) from the field checks and the cached GitHub check."""
+    cache = json.loads(CHECK_CACHE.read_text()) if CHECK_CACHE.exists() else {}
+    items = check_offline() + cache.get("found", [])
+    note = f"GitHub last checked {cache['checked']}." if cache.get("checked") else "GitHub not checked yet: run `brain.py check` (needs `gh_repo` in `.brain.json`)."
+    body = [f"> - {x}" for x in items] or ["> Nothing to fix. 🎉"]
+    lines = ["> <!-- chk:start -->", *body, ">", f"> *{note}*", "> <!-- chk:end -->"]
+    path = BRAIN / "Home.md"
+    text = path.read_text(encoding="utf-8")
+    new = re.sub(r"> <!-- chk:start -->.*?> <!-- chk:end -->", lambda _: "\n".join(lines), text, flags=re.S)
+    if new == text:
+        return len(items), False
+    path.write_text(new, encoding="utf-8")
+    return len(items), True
+
+
 def write_tag_css():
     tags = set()
     for f in VAULT.rglob("*.md"):
@@ -517,9 +629,9 @@ def write_tag_css():
             tags.update(x.lstrip("#") for x in fm["tags"] if x)
     out = ["/* Generated by `scripts/brain.py css`. One Notion colour per tag, matching Dashboard.html. Do not edit. */"]
     for tag in sorted(tags, key=str.lower):
-        n = int(hashlib.md5(tag.encode()).hexdigest(), 16) % 9
+        n = int(hashlib.md5(tag.encode()).hexdigest(), 16) % 8 + 1
         sel = tag.replace("\\", "\\\\").replace('"', '\\"')
-        out.append(f'a.tag[href="#{sel}" i]{{background:var(--nt-c{n}-b);color:var(--nt-c{n}-f)}}')
+        out.append(f'body a.tag[href$="#{sel}" i]{{--tag-background:var(--nt-c{n}-b);--tag-color:var(--nt-c{n}-f);--tag-border-color:transparent;background:var(--nt-c{n}-b)!important;color:var(--nt-c{n}-f)!important}}')
     path = VAULT / ".obsidian" / "snippets" / "tag-colours.css"
     content = "\n".join(out) + "\n"
     if path.exists() and path.read_text(encoding="utf-8") == content:
@@ -541,7 +653,15 @@ if __name__ == "__main__":
         print("Dashboard.html rewritten" if write_dashboard() else "Dashboard.html unchanged")
     elif cmd == "css":
         print("tag-colours.css rewritten" if write_tag_css() else "tag-colours.css unchanged")
+    elif cmd == "currentwork":
+        print("Home.md Current Work rewritten" if write_current_work() else "Home.md Current Work unchanged")
+    elif cmd == "check":
+        check_github()
+        n, _ = write_needs_attention()
+        print(f"{n} thing(s) need attention, see Home")
     elif cmd == "auto":
+        write_current_work()
+        write_needs_attention()
         print(f"auto-logged {auto()} line(s)")
     else:
         sys.exit(__doc__)

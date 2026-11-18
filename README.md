@@ -67,6 +67,23 @@ Run `./install.sh` first (the SessionStart hook reads the path it saves). Then a
 - `install.sh` replaces an existing *link* with the same skill name, but skips a real folder.
 - Not tested yet: the three skills in a fresh Claude session.
 
+## Folder structure
+```
+Projects/
+  <Project>/
+    <Project>.md                 the project: goal, tags, a live table of its tasks
+    Active-Work/
+      <task-folder>/             one task = one folder
+        STATUS.md                the task's card (the fields the hook, Home and brain.py read)
+        BRIEF-<date>.md          anything else for that task, as needed
+        HANDOFF-<date>.md        handoff for a fresh session, in the same folder
+```
+- **`STATUS.md` is the only file the tools read.** Everything else in the task folder is for you.
+- **One `STATUS.md` per task folder.** The folder name is the task's name, so every card is called `STATUS.md` on purpose.
+- **A handoff lives in its task folder** as `HANDOFF-YYYY-MM-DD.md`, and the task's `handoff:` field names the file (use `none` if there isn't one). Start one from `Templates/HANDOFF.md`.
+- **`Active-Work/` also holds finished tasks.** A finished task keeps its folder and gets `status: done`. It drops off Home's Current Work list but stays searchable.
+- **Make them with `/new-project`** (a project, then a task when you ask), or copy `Templates/STATUS.md` into a new task folder by hand.
+
 ## Tasks
 A task is a `STATUS.md` file in `Projects/<project>/Active-Work/<task>/`. Start from `Templates/STATUS.md` (copy it into a new task folder). `Templates/HANDOFF.md` is the matching handoff note for a fresh session. Keep the properties in the `---` block, and wrap a value in 'single quotes' if it contains ": ". The Current Work table reads them; `Projects/Example-Project` shows the shape.
 

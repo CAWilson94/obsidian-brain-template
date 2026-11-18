@@ -22,7 +22,7 @@ The script creates today's Daily Dev Note from the template if it does not exist
 | `[finding]` | something learned or measured |
 | `[decision]` | something chosen, with the reason in the same line |
 | `[pr]` | a PR or CI change (number, state) |
-| `[blocked]` | something stopping their, and what is needed |
+| `[blocked]` | something stopping the user, and what is needed |
 
 If the user did not say a tag, choose one. If nothing fits, use no tag.
 

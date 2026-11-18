@@ -16,7 +16,7 @@ Then say: "N things: A merged-PR tasks, B empty goals, C other." Read the list f
 
 ## 1. Merged PR, task still active (one task per turn)
 For each task, read its `STATUS.md` (`title`, `pr`, `last_done`, `next`, `blocked`). Show in a 4-line block:
-- Task and the merged PR (number, merge date from `gh pr view <n> -R <gh_repo from BRAIN/.brain.json> --json state,mergedAt,title`)
+- Task and the merged PR (number, merge date from `gh pr view <n> -R <gh_repo from .brain.json at the vault root> --json state,mergedAt,title`)
 - Its current `next`
 - Whether `next` or `blocked` still make sense now that the PR merged (say plainly if it looks stale; cite the field)
 
@@ -25,13 +25,13 @@ Ask ONE question with these options:
 |---|---|
 | **Done** | `status: done`; `last_done:` = today + "PR #n merged <date>"; `next: none`; `blocked: nothing` |
 | **Keep, new next step** | the user gives the next step; update `next`, drop stale `blocked`, add the merge to `last_done` |
-| **Park** | `status: parked`; ask their for the one next step |
+| **Park** | `status: parked`; ask the user for the one next step |
 | **Skip** | write nothing |
 
 Rules:
 - Never close a task, or invent a next step, without their answer. A follow-up step is their decision.
 - When a task has several `pr:` numbers, check them all before asking.
-- Edit only the header lines. Single-quote values that contain `: ` and double inner `'`. Keep their other fields as they are.
+- Edit only the header lines. Single-quote values that contain `: ` and double inner `'`. Keep the other fields as they are.
 
 ## 2. Empty project goal (one project per turn)
 For each project, read `Projects/<name>/<name>.md`, the `goal:` of its tasks in `Active-Work/*/STATUS.md`, and any `_START-HERE.md` or README there. Propose ONE goal line (what changes, for whom, under 20 words) and say which files it came from. Options: **use it**, **the user edits it** (the user types their own), **skip**. Write `goal:` in the project file's front matter only on their answer.
@@ -45,7 +45,7 @@ Run `brain.py check` again. Report in a table: closed, parked, goals set, skippe
 ## Never
 - Never edit more than one task per answer.
 - Never touch `Home.md` by hand; `brain.py` rewrites the card.
-- Never claim a task is finished from a PR alone. A merged PR is a prompt to ask their, not proof.
+- Never claim a task is finished from a PR alone. A merged PR is a prompt to ask the user, not proof.
 
 ## Needs `.brain.json`
 The GitHub check only runs when `.brain.json` at the vault root has `"gh_repo": "owner/name"`. If it is empty, say so once and skip the merged-PR step.

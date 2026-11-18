@@ -18,7 +18,8 @@ cssclasses:
 > <!-- cw:end -->
 
 > [!card] 🗓️ Dev Notes
-> ![[Recent Daily Notes.base]]
+> <!-- dev:start -->
+> <!-- dev:end -->
 
 > [!card|first-right] 🗂️ Projects
 > The big pieces of work.
@@ -29,12 +30,14 @@ cssclasses:
 > [!card] 🚧 Blocked
 > What is stopping a task, so you can unblock it or ask.
 >
-> ![[Blocked.base]]
+> <!-- blk:start -->
+> <!-- blk:end -->
 
 > [!card] 💤 Gone Quiet
 > Active tasks nobody has touched for 7 days.
 >
-> ![[Gone Quiet.base]]
+> <!-- gq:start -->
+> <!-- gq:end -->
 
 > [!card] 🧭 Needs attention
 > Fields to fix and PRs that have moved on. Refresh with `python3 scripts/brain.py check`.
@@ -48,10 +51,12 @@ cssclasses:
 > [!card] 🗺️ Side Quests
 > The shiny things you spotted.
 >
-> ![[Side Quests.base]]
+> <!-- sq:start -->
+> <!-- sq:end -->
 
 > [!card] 💬 Meeting Notes and 1-2-1s
-> ![[One to Ones.base]]
+> <!-- o2o:start -->
+> <!-- o2o:end -->
 
 > [!card] 📚 Guides & Processes, 🌱 Career
 > Link your own guides and career notes here, e.g. [[Debugging Playbook]] and [[Career Notes]].

@@ -102,7 +102,7 @@ def make_project(name, goal="", tags=None, emoji=""):
     (folder / "Active-Work").mkdir(parents=True, exist_ok=True)
     path.write_text(body, encoding="utf-8")
     write_tag_css()
-    write_projects()
+    write_home_lists()
     return path
 
 
@@ -170,6 +170,7 @@ def finish_task(project, task):
             f.write_text(body.replace(old, new), encoding="utf-8")
             changed += 1
     write_current_work()
+    write_home_lists()
     return dst, changed
 
 
@@ -649,6 +650,112 @@ def write_projects():
     return True
 
 
+def replace_home_block(marker, lines):
+    """Rewrites the part of Home.md between `<!-- marker:start -->` and `<!-- marker:end -->` (inside a callout) with the given list lines."""
+    block = [f"> <!-- {marker}:start -->", *lines, f"> <!-- {marker}:end -->"]
+    path = BRAIN / "Home.md"
+    text = path.read_text(encoding="utf-8")
+    new = re.sub(rf"> <!-- {marker}:start -->.*?> <!-- {marker}:end -->", lambda _: "\n".join(block), text, flags=re.S)
+    if new == text:
+        return False
+    path.write_text(new, encoding="utf-8")
+    return True
+
+
+def short(text, n=110):
+    text = " ".join(str(text or "").split())
+    return text[:n] + "\u2026" if len(text) > n else text
+
+
+def chips_for(fm):
+    tags = fm.get("tags") if isinstance(fm.get("tags"), list) else []
+    return " ".join("#" + str(x).lstrip("#") for x in tags if x)
+
+
+def task_files():
+    return [f for f in sorted((VAULT / "Projects").glob("*/Active-Work/**/STATUS.md"))]
+
+
+def task_line(f, fm, extra):
+    title = str(fm.get("title", f.parent.name))
+    chips = chips_for(fm) or f.relative_to(VAULT / "Projects").parts[0]
+    return [f"> - **[[{f.relative_to(VAULT).with_suffix('').as_posix()}|{title}]]** {chips}", f">   <small>{extra}</small>"]
+
+
+def write_blocked():
+    lines = []
+    for f in task_files():
+        fm = read_fm(f)
+        blocked = str(fm.get("blocked", "") or "")
+        if str(fm.get("status", "")).lower() == "done" or not blocked or blocked.lower().startswith("nothing"):
+            continue
+        lines += task_line(f, fm, "\U0001f6a7 " + short(blocked))
+    return replace_home_block("blk", lines or ["> Nothing is blocked. \U0001f389"])
+
+
+def write_gone_quiet():
+    rows = []
+    for f in task_files():
+        fm = read_fm(f)
+        if str(fm.get("status", "")).lower() != "active":
+            continue
+        days = (date.today() - datetime.fromtimestamp(f.stat().st_mtime).date()).days
+        if days >= 7:
+            rows.append((days, f, fm))
+    lines = []
+    for days, f, fm in sorted(rows, key=lambda r: -r[0])[:8]:
+        lines += task_line(f, fm, f"\U0001f4a4 quiet for {days} days. Next: {short(fm.get('next'), 80)}")
+    return replace_home_block("gq", lines or ["> Everything active has moved in the last 7 days. \U0001f389"])
+
+
+def daily_notes():
+    found = []
+    for f in [*(BRAIN / "Daily").glob("*.md"), *VAULT.glob("Projects/*/Daily/*.md")]:
+        fm = read_fm(f)
+        if fm.get("type") == "daily":
+            found.append((str(fm.get("date", "")), f))
+    return sorted(found, reverse=True)
+
+
+def write_dev_notes():
+    lines = []
+    for day, f in daily_notes()[:8]:
+        n = len(re.findall(r"^- \d\d:\d\d ", f.read_text(encoding="utf-8"), re.M))
+        lines.append(f"> - **[[{f.relative_to(VAULT).with_suffix('').as_posix()}|{f.stem}]]**")
+        if n:
+            lines.append(f">   <small>\U0001f4dd {n} logged line{'s' if n != 1 else ''}</small>")
+    return replace_home_block("dev", lines or ["> No daily notes yet."])
+
+
+def write_side_quests():
+    lines = []
+    for f in sorted((BRAIN / "SideQuests").glob("*.md")) if (BRAIN / "SideQuests").exists() else []:
+        fm = read_fm(f)
+        if fm.get("type") != "side-quest" or str(fm.get("status", "")).lower() in ("done", "dropped"):
+            continue
+        lines += [f"> - **[[{f.relative_to(VAULT).with_suffix('').as_posix()}|{f.stem}]]** {chips_for(fm)}".rstrip(), f">   <small>\U0001f9ed {short(fm.get('next') or fm.get('why') or fm.get('status'))}</small>"]
+    return replace_home_block("sq", lines or ["> No side quests yet. Make one from the Side Quest template. \U0001f43f\ufe0f"])
+
+
+def write_one_to_ones():
+    found = []
+    for f in VAULT.rglob("*.md"):
+        if ".git" in f.parts or ".obsidian" in f.parts or "Templates" in f.parts:
+            continue
+        fm = read_fm(f)
+        if fm.get("type") == "one-to-one":
+            found.append((str(fm.get("date", "")), f, fm))
+    lines = []
+    for day, f, fm in sorted(found, key=lambda r: r[0], reverse=True)[:8]:
+        lines += [f"> - **[[{f.relative_to(VAULT).with_suffix('').as_posix()}|{f.stem}]]**", f">   <small>\U0001f91d {fm.get('person', '')} \u00b7 {day}</small>"]
+    return replace_home_block("o2o", lines or ["> No 1-2-1 notes yet."])
+
+
+def write_home_lists():
+    """Refreshes every generated list on Home: Projects, Blocked, Gone Quiet, Dev Notes, Side Quests, 1-2-1s."""
+    return any([write_projects(), write_blocked(), write_gone_quiet(), write_dev_notes(), write_side_quests(), write_one_to_ones()])
+
+
 def write_current_work():
     """Rewrites the Current Work list inside Home.md (between cw markers) with real #tags so tag-colours.css colours them."""
     groups = {}
@@ -749,7 +856,11 @@ def write_needs_attention():
     cache = json.loads(CHECK_CACHE.read_text()) if CHECK_CACHE.exists() else {}
     items = check_offline() + cache.get("found", [])
     note = f"GitHub last checked {cache['checked']}." if cache.get("checked") else "GitHub not checked yet: run `brain.py check` (needs `gh_repo` in `.brain.json`)."
-    body = [f"> - {x}" for x in items] or ["> Nothing to fix. 🎉"]
+    def mark(x):
+        low = x.lower()
+        icon = "\U0001f500" if "merged" in low or "closed" in low else "\U0001f3af" if "goal" in low else "\U0001f4e6" if "finish" in low else "\u26a0\ufe0f"
+        return f"> - {icon} {x}"
+    body = [mark(x) for x in items] or ["> Nothing to fix. \U0001f389"]
     lines = ["> <!-- chk:start -->", *body, ">", f"> *{note}*", "> <!-- chk:end -->"]
     path = BRAIN / "Home.md"
     text = path.read_text(encoding="utf-8")
@@ -803,7 +914,7 @@ if __name__ == "__main__":
         print("tag-colours.css rewritten" if write_tag_css() else "tag-colours.css unchanged")
     elif cmd == "currentwork":
         write_tag_css()
-        write_projects()
+        write_home_lists()
         print("Home.md Current Work rewritten" if write_current_work() else "Home.md Current Work unchanged")
     elif cmd == "check":
         check_github()
@@ -811,7 +922,7 @@ if __name__ == "__main__":
         print(f"{n} thing(s) need attention, see Home")
     elif cmd == "auto":
         write_tag_css()
-        write_projects()
+        write_home_lists()
         write_current_work()
         write_needs_attention()
         print(f"auto-logged {auto()} line(s)")

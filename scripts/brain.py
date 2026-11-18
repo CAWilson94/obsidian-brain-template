@@ -122,6 +122,40 @@ def make_task(project, title, goal, next_step=""):
     return path
 
 
+def finish_task(project, task):
+    """Sets a task to done, moves Active-Work/<task> to Finished-Work/<task>, and rewrites links that point at the old folder."""
+    base = VAULT / "Projects" / project
+    src, dst = base / "Active-Work" / task, base / "Finished-Work" / task
+    status_file = src / "STATUS.md"
+    if not status_file.exists():
+        sys.exit(f"no such task: {status_file}")
+    if dst.exists():
+        sys.exit(f"exists, not touching: {dst}")
+    text = status_file.read_text(encoding="utf-8")
+    head, sep, rest = text.partition("\n---\n")
+    lines, set_done = head.split("\n"), False
+    for i, line in enumerate(lines):
+        if line.startswith("status:"):
+            lines[i], set_done = "status: done", True
+    if not set_done:
+        sys.exit(f"no status: line in {status_file}")
+    status_file.write_text("\n".join(lines) + sep + rest, encoding="utf-8")
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    src.rename(dst)
+    old, new, changed = f"{project}/Active-Work/{task}", f"{project}/Finished-Work/{task}", 0
+    for f in VAULT.rglob("*.md"):
+        if ".git" in f.parts or ".obsidian" in f.parts:
+            continue
+        try:
+            body = f.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if old in body:
+            f.write_text(body.replace(old, new), encoding="utf-8")
+            changed += 1
+    return dst, changed
+
+
 def today_note():
     today = f"Daily Dev Note {datetime.now():%Y-%m-%d}"
     found = sorted((BRAIN / "Daily").glob(f"*{today}*.md"))
@@ -609,11 +643,18 @@ def check_offline():
     """Field problems that need no network: missing fields, bad pr values, project files with no goal."""
     found = []
     for f in sorted((VAULT / "Projects").rglob("STATUS.md")):
-        if "Active-Work" not in f.parts:
-            continue
         fm = read_fm(f)
         name = str(fm.get("title", f.parent.name))
-        if str(fm.get("status", "")).lower() == "done":
+        done = str(fm.get("status", "")).lower() == "done"
+        project = f.relative_to(VAULT / "Projects").parts[0]
+        if "Finished-Work" in f.parts:
+            if not done:
+                found.append(f"{name}: is in Finished-Work but its status is not done (move it back to Active-Work, or set `status: done`)")
+            continue
+        if "Active-Work" not in f.parts:
+            continue
+        if done:
+            found.append(f"{name}: is done but still in Active-Work, run `brain.py finish \"{project}\" \"{f.parent.name}\"`")
             continue
         for key in ("title", "status", "goal", "next"):
             if not fm.get(key):
@@ -702,6 +743,9 @@ if __name__ == "__main__":
         print(new_note(args[0], " ".join(args[1:])))
     elif cmd == "log" and args:
         print(append_log(" ".join(args)))
+    elif cmd == "finish" and len(args) == 2:
+        dst, n = finish_task(args[0], args[1])
+        print(f"moved to {dst}; links rewritten in {n} note(s)")
     elif cmd == "project" and args:
         print(make_project(args[0], args[1] if len(args) > 1 else ""))
     elif cmd == "task" and len(args) >= 3:

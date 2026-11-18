@@ -23,7 +23,7 @@ For each task, read its `STATUS.md` (`title`, `pr`, `last_done`, `next`, `blocke
 Ask ONE question with these options:
 | Choice | What you write |
 |---|---|
-| **Done** | `status: done`; `last_done:` = today + "PR #n merged <date>"; `next: none`; `blocked: nothing` |
+| **Done** | `status: done`; `last_done:` = today + "PR #n merged <date>"; `next: none`; `blocked: nothing`; then move it: `python3 -I "$(cat ~/.config/obsidian-brain/script)" finish "<project>" "<task folder>"` (moves it to `Finished-Work/` and fixes links) |
 | **Keep, new next step** | the user gives the next step; update `next`, drop stale `blocked`, add the merge to `last_done` |
 | **Park** | `status: parked`; ask the user for the one next step |
 | **Skip** | write nothing |
@@ -38,6 +38,7 @@ For each project, read `Projects/<name>/<name>.md`, the `goal:` of its tasks in 
 
 ## 3. Other findings
 Empty `title`, `status`, `goal`, `next` on a task, or a `pr:` that is not a PR number: show the one line, ask what the value should be. Do not guess values.
+A task that is `done` but still in `Active-Work`: ask, then run the `finish` command above. A task in `Finished-Work` that is not `done`: ask whether to set it to `done` or move it back to `Active-Work`.
 
 ## 4. Finish
 Run `brain.py check` again. Report in a table: closed, parked, goals set, skipped, still open. Say which checks ran. End with one next step. Do NOT log to the daily note unless the user says "log this".

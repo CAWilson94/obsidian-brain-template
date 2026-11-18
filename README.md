@@ -77,11 +77,13 @@ Projects/
         STATUS.md                the task's card (the fields the hook, Home and brain.py read)
         BRIEF-<date>.md          anything else for that task, as needed
         HANDOFF-<date>.md        handoff for a fresh session, in the same folder
+    Finished-Work/
+      <task-folder>/             a done task, moved here with `brain.py finish`
 ```
 - **`STATUS.md` is the only file the tools read.** Everything else in the task folder is for you.
 - **One `STATUS.md` per task folder.** The folder name is the task's name, so every card is called `STATUS.md` on purpose.
 - **A handoff lives in its task folder** as `HANDOFF-YYYY-MM-DD.md`, and the task's `handoff:` field names the file (use `none` if there isn't one). Start one from `Templates/HANDOFF.md`.
-- **`Active-Work/` also holds finished tasks.** A finished task keeps its folder and gets `status: done`. It drops off Home's Current Work list but stays searchable.
+- **A done task moves to `Finished-Work/`.** Set `status: done`, then run `python3 scripts/brain.py finish <project> <task-folder>`: it moves the whole folder and fixes any links to it. `Active-Work/` then only holds live tasks, and `brain.py check` flags a done task left behind.
 - **Make them with `/new-project`** (a project, then a task when you ask), or copy `Templates/STATUS.md` into a new task folder by hand.
 
 ## Tasks

@@ -631,7 +631,7 @@ def write_tag_css():
     for tag in sorted(tags, key=str.lower):
         n = int(hashlib.md5(tag.encode()).hexdigest(), 16) % 8 + 1
         sel = tag.replace("\\", "\\\\").replace('"', '\\"')
-        out.append(f'body a.tag[href$="{sel}" i]{{--tag-background:var(--nt-c{n}-b);--tag-color:var(--nt-c{n}-f);--tag-border-color:transparent;background:var(--nt-c{n}-b)!important;color:var(--nt-c{n}-f)!important}}')
+        out.append(f'body a.tag[href$="#{sel}" i]{{--tag-background:var(--nt-c{n}-b);--tag-color:var(--nt-c{n}-f);--tag-border-color:transparent;background:var(--nt-c{n}-b)!important;color:var(--nt-c{n}-f)!important}}')
     path = VAULT / ".obsidian" / "snippets" / "tag-colours.css"
     content = "\n".join(out) + "\n"
     if path.exists() and path.read_text(encoding="utf-8") == content:

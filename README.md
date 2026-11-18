@@ -24,6 +24,17 @@ A work-brain vault for Obsidian: a Home page with a banner, live tables of tasks
 - `python3 scripts/brain.py stats` and `dashboard` rewrite `Stats.md` and `Dashboard.html` (a coloured, Notion-style page that opens in a browser). The hook runs both after `auto`.
 Nothing is ever overwritten.
 
+## Skills for Claude Code
+`./install.sh` links the skills in `skills/` into `~/.claude/skills/` and tells them where this brain lives (`~/.config/obsidian-brain/`). Start a new Claude Code session afterwards.
+| Skill | What it does |
+|---|---|
+| `log` | "log this": adds one tagged line to today's Daily Dev Note |
+| `clean-notes` | Walks the Home "Needs attention" list one item at a time: tasks whose PR merged, empty project goals |
+| `cha-generic-review` | Reviews a GitHub PR against `rules/review-rules.md`. Edit those rules to your own |
+
+Set `"gh_repo": "owner/name"` in `.brain.json` so PR numbers become links and `python3 scripts/brain.py check` can see which PRs have merged. Leave it empty to skip that.
+STATUS.md also takes `pr: [123]` (PRs you raised), `issue: [url]` and `links: [url]`.
+
 ## Tasks
 A task is a `STATUS.md` file in `Projects/<project>/Active-Work/<task>/`. Keep the properties in the `---` block, and wrap a value in 'single quotes' if it contains ": ". The Current Work table reads them; `Projects/Example-Project` shows the shape.
 

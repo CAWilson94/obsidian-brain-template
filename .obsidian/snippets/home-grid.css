@@ -3,21 +3,31 @@
   --file-line-width: 1400px;
 }
 .home-grid .markdown-preview-sizer {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  align-items: start;
+  /* two fixed columns: cards before the one marked [!card|first-right] go left, the rest go right */
+  column-count: 2;
+  column-fill: auto;
+  column-gap: 18px;
+  max-width: 1400px;
+}
+.home-grid .markdown-preview-sizer > div:has(> .callout[data-callout-metadata="first-right"]) {
+  break-before: column;
+}
+@media (max-width: 900px) {
+  .home-grid .markdown-preview-sizer { column-count: 1; }
 }
 .home-grid .markdown-preview-sizer > div {
-  min-width: 0;
+  break-inside: avoid;
+  margin: 0 0 18px;
+  padding: 0;
 }
 /* full-width blocks: banner, intro, wide cards, the pusher spacer */
 .home-grid .markdown-preview-sizer > div:has(.image-embed),
 .home-grid .markdown-preview-sizer > div:has(> .callout[data-callout="intro"]),
 .home-grid .markdown-preview-sizer > div:has(> .callout[data-callout="wide"]),
 .home-grid .markdown-preview-sizer > .markdown-preview-pusher {
-  grid-column: 1 / -1;
+  column-span: all;
 }
+.home-grid .callout { margin: 0; }
 .home-grid .image-embed img {
   width: 100%;
   height: 200px;
@@ -50,3 +60,6 @@
 .home-grid .callout[data-callout="intro"] .callout-icon {
   display: none;
 }
+
+/* task links in cards: plain text, not purple underlined */
+.callout .internal-link{text-decoration:none;color:inherit}

@@ -6,9 +6,6 @@ cssclasses:
 
 > [!intro] 📓 Home, for y'know, work things. Switch to Reading view (Cmd+E) to see the grid.
 > [[Dashboard.html|🌈 Open the pretty view]]
->
-> <!-- st:start -->
-> <!-- st:end -->
 
 > [!card] 🚦 Current Work
 > Live from each task's STATUS.md.
@@ -20,23 +17,23 @@ cssclasses:
 > - [[Projects/Example-Project/Active-Work/example-task/STATUS|Example task]]
 > <!-- cw:end -->
 
-> [!card]- 🗓️ Dev Notes
-> <!-- dev:start -->
-> <!-- dev:end -->
-
-> [!card|first-right] 🚨 Needs you
-> <!-- ny:start -->
-> <!-- ny:end -->
-
 > [!card]- 🎯 Today
 > <!-- td:start -->
 > <!-- td:end -->
 
-> [!card] 🗂️ Projects
+> [!card]- 🗓️ Dev Notes
+> <!-- dev:start -->
+> <!-- dev:end -->
+
+> [!card|first-right] 🗂️ Projects
 > The big pieces of work.
 >
 > <!-- pj:start -->
 > <!-- pj:end -->
+
+> [!card] 🚨 Needs you
+> <!-- ny:start -->
+> <!-- ny:end -->
 
 > [!card]- 🗺️ Side Quests
 > The shiny things you spotted.

@@ -816,18 +816,8 @@ def write_needs_you():
     note = f"GitHub last checked {cache['checked']}." if cache.get("checked") else "GitHub not checked yet: run `brain.py check` (needs `gh_repo` in `.brain.json`)."
     lines += [">", f"> <small>{note}</small>"]
     total = len(blocked) + len(quiet) + len(fixes)
-    retitle_card("\U0001f6a8 Needs you", f" \u00b7 {total}" if total else "", first_right=True)
+    retitle_card("\U0001f6a8 Needs you", f" \u00b7 {total}" if total else "")
     return replace_home_block("ny", lines)
-
-
-def write_stats_strip():
-    """The one-line summary under the intro on Home."""
-    tasks = [read_fm(f) for f in task_files()]
-    status = lambda s: sum(1 for fm in tasks if str(fm.get("status", "")).lower() == s)
-    fixes, _ = fix_items()
-    strip = (f"> \U0001f4ca **{status('active')}** active \u00b7 **{status('parked')}** parked \u00b7 **{len(blocked_rows())}** blocked"
-             f" \u00b7 **{len(closed_this_week())}** closed this week \u00b7 **{len(fixes)}** to fix")
-    return replace_home_block("st", [strip])
 
 
 def daily_notes():
@@ -957,7 +947,7 @@ def write_today():
 
 def write_home_lists():
     """Refreshes every generated list on Home: Projects, Blocked, Gone Quiet, Dev Notes, Side Quests, 1-2-1s."""
-    return any([write_today(), write_project_pages(), write_projects(), write_needs_you(), write_stats_strip(), write_dev_notes(), write_side_quests(), write_one_to_ones()])
+    return any([write_today(), write_project_pages(), write_projects(), write_needs_you(), write_dev_notes(), write_side_quests(), write_one_to_ones()])
 
 
 def write_current_work():

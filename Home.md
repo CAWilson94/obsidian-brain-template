@@ -6,6 +6,9 @@ cssclasses:
 
 > [!intro] 📓 Home, for y'know, work things. Switch to Reading view (Cmd+E) to see the grid.
 > [[Dashboard.html|🌈 Open the pretty view]]
+>
+> <!-- st:start -->
+> <!-- st:end -->
 
 > [!card] 🚦 Current Work
 > Live from each task's STATUS.md.

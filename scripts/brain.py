@@ -892,10 +892,10 @@ def write_today():
             week.append((when, str(fm.get("title", f.parent.name))))
     if week:
         lines += [">", "> \U0001f3c6 **Closed this week**"] + [f"> - ✅ {title}" for _, title in sorted(week, reverse=True)[:6]]
-    title = "> [!card]- \U0001f3af Today" + (f" \u00b7 {done} of {len(items)} done" if note and items else "")
+    title = "> [!card|first-right]- \U0001f3af Today" + (f" \u00b7 {done} of {len(items)} done" if note and items else "")
     home = BRAIN / "Home.md"
     text = home.read_text(encoding="utf-8")
-    retitled = re.sub(r"^> \[!card\]-? \U0001f3af Today.*$", lambda _: title, text, count=1, flags=re.M)
+    retitled = re.sub(r"^> \[!card(?:\|first-right)?\]-? \U0001f3af Today.*$", lambda _: title, text, count=1, flags=re.M)
     if retitled != text:
         home.write_text(retitled, encoding="utf-8")
     return replace_home_block("td", lines)

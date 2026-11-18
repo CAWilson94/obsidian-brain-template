@@ -77,26 +77,40 @@ def yaml_value(value):
     return v
 
 
-def make_project(name, goal="", tags=None):
-    """Creates Projects/<name>/<name>.md (with a goal and a tasks table) and an empty Active-Work folder."""
+def find_project_file(project):
+    """The project's own note in Projects/<project>/ (type: project), whether or not its file name starts with an emoji."""
+    folder = VAULT / "Projects" / project
+    for f in sorted(folder.glob("*.md")):
+        if read_fm(f).get("type") == "project":
+            return f
+    return None
+
+
+def make_project(name, goal="", tags=None, emoji=""):
+    """Creates Projects/<name>/<emoji> <name>.md (with a goal and a tasks table) and an empty Active-Work folder. No emoji given means a random unused one."""
     folder = VAULT / "Projects" / name
-    path = folder / f"{name}.md"
-    if path.exists():
-        sys.exit(f"exists, not touching: {path}")
+    existing = find_project_file(name) if folder.exists() else None
+    if existing:
+        sys.exit(f"exists, not touching: {existing}")
+    emoji = emoji.strip() or pick_emoji()
+    title = f"{emoji} {name}"
+    path = folder / f"{title}.md"
     tag_list = tags if tags is not None else [slugify(name)]
-    body = (f"---\ntype: project\nstatus: active\ntags: [{', '.join(tag_list)}]\ngoal: {yaml_value(goal)}\n---\n\n# {name}\n"
+    body = (f"---\ntype: project\nstatus: active\ntags: [{', '.join(tag_list)}]\ngoal: {yaml_value(goal)}\n---\n\n# {title}\n"
             "> [!info] \U0001f5fa\ufe0f Y'know, what this project is for and where its tasks live. Tasks are the STATUS.md files in `Active-Work/`.\n\n"
             "## \U0001f6a6 Tasks in this project\n![[Project Tasks.base]]\n")
     (folder / "Active-Work").mkdir(parents=True, exist_ok=True)
     path.write_text(body, encoding="utf-8")
+    write_tag_css()
+    write_projects()
     return path
 
 
 def make_task(project, title, goal, next_step=""):
     """Creates Projects/<project>/Active-Work/<slug>/STATUS.md from Templates/STATUS.md, active, tagged with the project's tags."""
-    project_file = VAULT / "Projects" / project / f"{project}.md"
-    if not project_file.exists():
-        sys.exit(f"no such project: {project_file}")
+    project_file = find_project_file(project)
+    if not project_file:
+        sys.exit(f"no such project: {VAULT / 'Projects' / project}")
     tags = read_fm(project_file).get("tags")
     tags = tags if isinstance(tags, list) else []
     path = VAULT / "Projects" / project / "Active-Work" / slugify(title) / "STATUS.md"
@@ -119,6 +133,8 @@ def make_task(project, title, goal, next_step=""):
         out.append(line.replace("### YYYY-MM-DD", f"### {today}"))
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(out), encoding="utf-8")
+    write_tag_css()
+    write_current_work()
     return path
 
 
@@ -153,6 +169,7 @@ def finish_task(project, task):
         if old in body:
             f.write_text(body.replace(old, new), encoding="utf-8")
             changed += 1
+    write_current_work()
     return dst, changed
 
 
@@ -604,6 +621,34 @@ def gh_repo():
         return ""
 
 
+def write_projects():
+    """Rewrites the Projects list in Home.md (between pj markers): one line per active project with real #tags, so the chip colours match Current Work."""
+    lines = ["> <!-- pj:start -->"]
+    for d in sorted((VAULT / "Projects").glob("*/")):
+        f = find_project_file(d.name)
+        if not f:
+            continue
+        fm = read_fm(f)
+        if str(fm.get("status", "")).lower() != "active":
+            continue
+        tags = fm.get("tags") if isinstance(fm.get("tags"), list) else []
+        chips = " ".join("#" + str(x).lstrip("#") for x in tags if x)
+        goal = str(fm.get("goal", "") or "")
+        goal = (goal[:100] + "…") if len(goal) > 100 else goal
+        emoji = emoji_for(f.stem if re.match(r"^[^\w\s\-.]", f.stem) else d.name)
+        lines.append(f"> - {emoji} **[[{f.relative_to(VAULT).with_suffix('').as_posix()}|{d.name}]]** {chips}".rstrip())
+        if goal:
+            lines.append(f">   <small>{goal}</small>")
+    lines.append("> <!-- pj:end -->")
+    path = BRAIN / "Home.md"
+    text = path.read_text(encoding="utf-8")
+    new = re.sub(r"> <!-- pj:start -->.*?> <!-- pj:end -->", lambda _: "\n".join(lines), text, flags=re.S)
+    if new == text:
+        return False
+    path.write_text(new, encoding="utf-8")
+    return True
+
+
 def write_current_work():
     """Rewrites the Current Work list inside Home.md (between cw markers) with real #tags so tag-colours.css colours them."""
     groups = {}
@@ -747,7 +792,7 @@ if __name__ == "__main__":
         dst, n = finish_task(args[0], args[1])
         print(f"moved to {dst}; links rewritten in {n} note(s)")
     elif cmd == "project" and args:
-        print(make_project(args[0], args[1] if len(args) > 1 else ""))
+        print(make_project(args[0], args[1] if len(args) > 1 else "", emoji=args[2] if len(args) > 2 else ""))
     elif cmd == "task" and len(args) >= 3:
         print(make_task(args[0], args[1], args[2], args[3] if len(args) > 3 else ""))
     elif cmd == "stats":
@@ -757,12 +802,16 @@ if __name__ == "__main__":
     elif cmd == "css":
         print("tag-colours.css rewritten" if write_tag_css() else "tag-colours.css unchanged")
     elif cmd == "currentwork":
+        write_tag_css()
+        write_projects()
         print("Home.md Current Work rewritten" if write_current_work() else "Home.md Current Work unchanged")
     elif cmd == "check":
         check_github()
         n, _ = write_needs_attention()
         print(f"{n} thing(s) need attention, see Home")
     elif cmd == "auto":
+        write_tag_css()
+        write_projects()
         write_current_work()
         write_needs_attention()
         print(f"auto-logged {auto()} line(s)")

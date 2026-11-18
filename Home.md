@@ -23,7 +23,8 @@ cssclasses:
 > [!card|first-right] 🗂️ Projects
 > The big pieces of work.
 >
-> ![[Projects Cards.base]]
+> <!-- pj:start -->
+> <!-- pj:end -->
 
 > [!card] 🚧 Blocked
 > What is stopping a task, so you can unblock it or ask.

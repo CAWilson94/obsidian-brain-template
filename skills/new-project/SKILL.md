@@ -15,9 +15,10 @@ Run everything with the script the install saved:
 ## New project
 1. **Name.** If the user did not give one, ask for it. Use it as the folder name exactly as typed.
 2. **Goal.** Ask: "What changes, and for whom? One line." This is required. If the user is unsure, offer one draft goal from what they told you and let them edit it. Do not make the project with an empty goal.
-3. Run: `... project "<name>" "<goal>"`
-   It makes `Projects/<name>/<name>.md` (type project, tag from the name, the goal, a tasks table) and an empty `Active-Work/` folder. It refuses to touch a project that already exists.
-4. Report the path in one line. Then ask once: "Want a first task in it?" If the answer is no, stop. Do not make one on your own.
+3. **Emoji.** Pick ONE emoji for the title yourself, related to the project. It can be literal or an obscure joke (a sink emoji for a project about syncing). Tell the user which one you picked and why in a few words, so they can change it. Do not ask them to choose.
+4. Run: `... project "<name>" "<goal>" "<emoji>"`
+   It makes `Projects/<name>/<emoji> <name>.md` (type project, tag from the name, the goal, a tasks table) and an empty `Active-Work/` folder, adds the project to Home with a coloured `#tag`, and regenerates the tag colours. It refuses to touch a project that already exists. With no emoji it picks a random unused one.
+5. Report the path in one line. Then ask once: "Want a first task in it?" If the answer is no, stop. Do not make one on your own.
 
 ## New task (only when the user asks)
 1. Which project? It must exist under `Projects/`. If it does not, offer to make it first.

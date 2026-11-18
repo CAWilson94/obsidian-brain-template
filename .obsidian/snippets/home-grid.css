@@ -63,3 +63,28 @@
 
 /* task links in cards: plain text, not purple underlined */
 .callout .internal-link{text-decoration:none;color:inherit}
+
+/* Notion-like type on Home: bigger body text, a big bold title, quieter card text, no properties block */
+.markdown-preview-view.home-grid {
+  --font-text-size: 16px;
+  --line-height-normal: 1.65;
+}
+.markdown-preview-view.home-grid .inline-title {
+  font-size: 2.6em;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.4em;
+}
+.home-grid .metadata-container { display: none; }
+.home-grid .callout[data-callout="card"] .callout-title,
+.home-grid .callout[data-callout="wide"] .callout-title {
+  font-size: 1.5em;
+  font-weight: 700;
+  padding-bottom: 10px;
+}
+.home-grid .callout li { margin: 7px 0; }
+.home-grid .callout ul { padding-inline-start: 1.2em; }
+.home-grid .callout small { color: var(--text-muted); font-size: 0.82em; line-height: 1.4; }
+.home-grid .callout strong { font-weight: 600; }
+.home-grid a.tag { font-size: 0.82em; padding: 1px 7px; }
+.home-grid .callout[data-callout="intro"] { font-size: 1.05em; padding: 14px 18px; }

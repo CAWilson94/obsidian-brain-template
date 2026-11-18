@@ -101,3 +101,6 @@ body.theme-light .markdown-preview-view.home-grid { --text-normal: #37352f; }
 .home-grid .callout ul { list-style: none; padding-inline-start: 0; }
 .home-grid .callout li { list-style: none; }
 .home-grid .callout li::marker { content: ""; }
+
+/* group labels in Current Work (Active, Parked) */
+.home-grid .callout p > strong:only-child { font-size: 1.2em; font-weight: 700; display: inline-block; margin-top: 0.5em; }

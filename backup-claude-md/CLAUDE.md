@@ -17,7 +17,7 @@
 - Only when I say "log this": use the `log` skill (one tagged line: finding, decision, pr, blocked). Don't log on your own. A Stop hook already logs task and commit changes with no tokens.
 
 ## Several tasks in flight (I get overwhelmed and lose the thread)
-- One task is **active** per session, but several sessions (agents) can each have their own active task at once. Others are **parked**. A task in flight has `Active-Work/<task>/STATUS.md` (template: `~/.claude/templates/STATUS.md`). A SessionStart hook lists them.
+- One task is **active** per session, but several sessions (agents) can each have their own active task at once. Others are **parked**. A task in flight has `Active-Work/<task>/STATUS.md` (template: `~/.claude/templates/STATUS.md`). A SessionStart hook lists them. When a task is done, set `status: done` and move it with `python3 -I ~/Documents/ObsidianRecovered/Brain/scripts/brain.py finish <project> <task>`, which moves it to `Finished-Work/<task>/` and fixes links; never leave a done task in `Active-Work`.
 - Start of a session: say "Current task: X. Parked: Y, Z." in one line.
 - When I pick a task (by name or by its number in the hook's list): read its STATUS.md and the handoff's "Start here" block if there is one, and set its `status:` to `active`. Don't touch other `active` tasks (another session may own them); only park one if I say so. Then give me its next step. Don't read the full handoff unless I ask.
 - If I ask for something new mid-task, ask once "switch now, or stay on the current task?" and write nothing until I answer. If I say park, write the STATUS.md stub then.
@@ -25,6 +25,7 @@
 - "Where was I?": answer in 3 lines or fewer (doing, last finished, one next step) and name the files used.
 - More than 4 tasks in flight: say so and ask what to finish or drop. Warn, don't block.
 - Reply short, one question at a time, and end with one concrete next step.
+- Save tokens: keep replies under about 8 lines unless I ask for detail, no long tables after every step, and don't re-run checks that can't have changed. Update STATUS.md (`last_done`, `next`) only when I say "close out" or park the task, and don't ask "want this in last_done too?" after each step.
 - Where things live: hook `~/.claude/hooks/task-status.sh` (SessionStart in `~/.claude/settings.json`), templates `~/.claude/templates/`, cheat sheet `~/Downloads/ObsidianVault/Projects/Claude-Projects/task-tracking-cheatsheet.md`.
 
 ## How to write to me (I have ADHD)

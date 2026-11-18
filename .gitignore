@@ -1,6 +1,11 @@
 .DS_Store
 .obsidian/workspace*.json
-.obsidian/plugins/
 .stats_history.json
 .check_gh.json
 __pycache__/
+
+# keep only Templater's settings from the plugins folder
+.obsidian/plugins/*
+!.obsidian/plugins/templater-obsidian/
+.obsidian/plugins/templater-obsidian/*
+!.obsidian/plugins/templater-obsidian/data.json

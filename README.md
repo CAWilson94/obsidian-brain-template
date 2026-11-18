@@ -30,6 +30,7 @@ Nothing is ever overwritten.
 |---|---|
 | `log` | "log this": adds one tagged line to today's Daily Dev Note |
 | `new-project` | Starts a project (always asks for a goal) and adds a task to it when you ask |
+| `close-out` | Updates the task you worked on once at the end of a session: `last_done`, `next`, PRs (one confirmed edit) |
 | `clean-notes` | Walks the Home "Needs attention" list one item at a time: tasks whose PR merged, empty project goals |
 | `cha-generic-review` | Reviews a GitHub PR against `rules/review-rules.md`. Edit those rules to your own |
 
@@ -44,6 +45,7 @@ STATUS.md also takes `pr: [123]` (PRs you raised), `issue: [url]` and `links: [u
 | 3. Capture | Say **"log this"** for a finding or decision | `log` skill adds one tagged line to the daily note |
 | 4. Tidy | When Home's **Needs attention** card is not empty, run `/clean-notes` | `brain.py check` refreshes it (the GitHub part needs `gh_repo` in `.brain.json` and the `gh` CLI logged in); the skill then goes through it one item at a time |
 | 5. Review | `/cha-generic-review <PR url>` | Reads `rules/review-rules.md` and the PR; posts nothing |
+| 5b. Close out | `/close-out` at the end of a session | Updates the task card once (`last_done`, `next`) |
 | 6. Save | Commit the vault | Plain git |
 
 ### Set up the hooks

@@ -1,0 +1,23 @@
+{
+  "templates_folder": "Templates",
+  "trigger_on_file_creation": true,
+  "enable_folder_templates": true,
+  "folder_templates": [
+    {
+      "folder": "Daily",
+      "template": "Templates/Daily Dev Note.md"
+    },
+    {
+      "folder": "Meetings",
+      "template": "Templates/1-2-1.md"
+    },
+    {
+      "folder": "Epics",
+      "template": "Templates/Epic.md"
+    },
+    {
+      "folder": "SideQuests",
+      "template": "Templates/Side Quest.md"
+    }
+  ]
+}

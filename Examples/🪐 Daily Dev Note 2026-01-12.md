@@ -5,7 +5,7 @@ tags: [2026]
 ---
 
 ## Stand-up
-Worked on [[🌱 Example task: add search filter]].
+Worked on [[Projects/Example-Project/Active-Work/example-task/STATUS|Example task]].
 
 ## Daily TODO
 - [ ] Sketch the filter UI

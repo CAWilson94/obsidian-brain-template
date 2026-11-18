@@ -10,8 +10,8 @@ A work-brain vault for Obsidian: a Home page with a banner, live tables of tasks
 5. Open `Home`. Delete the `Examples` folder when you are ready.
 
 ## Daily use
-- New task / daily note / 1-2-1 / epic / side quest: command palette, "Templater: Create new note from template". Each gets a random emoji in its title that no other note title starts with. Change it by hand any time.
-- Put notes in `Tasks`, `Daily`, `Meetings`, `Epics`. Tables find notes by the `type` property, not the folder.
+- New daily note / 1-2-1 / epic / side quest: command palette, "Templater: Create new note from template". Each gets a random emoji in its title that no other note title starts with. Change it by hand any time.
+- Put notes in `Daily`, `Meetings`, `Epics`, `SideQuests`. Tables find notes by the `type` property, not the folder.
 - Link tasks from the daily note with `[[wikilinks]]`; each task lists the daily notes that mention it.
 - Filter by tags: add `tags: [ui, bug]` to a task, then add a filter in the Base.
 
@@ -67,12 +67,12 @@ Run `./install.sh` first (the SessionStart hook reads the path it saves). Then a
 - Not tested yet: the three skills in a fresh Claude session.
 
 ## Tasks
-A task is a `STATUS.md` file in `Projects/<project>/Active-Work/<task>/`. Keep the properties in the `---` block, and wrap a value in 'single quotes' if it contains ": ". The Current Work table reads them; `Projects/Example-Project` shows the shape.
+A task is a `STATUS.md` file in `Projects/<project>/Active-Work/<task>/`. Start from `Templates/STATUS.md` (copy it into a new task folder). `Templates/HANDOFF.md` is the matching handoff note for a fresh session. Keep the properties in the `---` block, and wrap a value in 'single quotes' if it contains ": ". The Current Work table reads them; `Projects/Example-Project` shows the shape.
 
 ## Properties (frontmatter)
 | Note | Properties |
 |---|---|
-| Task | type, status, tags, created, ticket, branch, pr, summary |
+| Task (`STATUS.md`) | title, pr, issue, links, status (active, parked, done), goal, last_done, next, blocked, handoff |
 | Daily | type, date, tags |
 | 1-2-1 | type, person, date, tags |
 | Epic | type, status, tags, created, issue, link |

@@ -5,14 +5,14 @@ description: Walk the user through the "Needs attention" list in their Obsidian 
 
 # Clean notes
 
-Goal: clear the 🧭 Needs attention card on `Home.md` together, one item at a time.
+Goal: clear the 🔧 To fix list in the 🚨 Needs you card on `Home.md` together, one item at a time.
 Vault: `Home.md` and `scripts/` sit together in BRAIN, the parent of the folder the path in `~/.config/obsidian-brain/script` points into. `Projects/` sits in BRAIN, or in its parent when the vault keeps the brain in a subfolder (read `VAULT` at the top of `brain.py`). Reply short, one question at a time, bold what matters, end with one next step.
 
 ## 0. Refresh and count
 ```
 python3 -I "$(cat ~/.config/obsidian-brain/script)" check
 ```
-Then say: "N things: A merged-PR tasks, B empty goals, C other." Read the list from `Home.md` between `chk:start` and `chk:end`. Start with merged-PR tasks.
+Then say: "N things: A merged-PR tasks, B empty goals, C other." Read the 🔧 To fix list in the 🚨 Needs you card of `Home.md` (between `ny:start` and `ny:end`). Start with merged-PR tasks.
 
 ## 1. Merged PR, task still active (one task per turn)
 For each task, read its `STATUS.md` (`title`, `pr`, `last_done`, `next`, `blocked`). Show in a 4-line block:

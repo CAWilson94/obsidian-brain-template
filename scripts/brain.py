@@ -692,11 +692,15 @@ def write_projects():
         tags = fm.get("tags") if isinstance(fm.get("tags"), list) else []
         chips = " ".join("#" + str(x).lstrip("#") for x in tags if x)
         goal = str(fm.get("goal", "") or "")
-        goal = (goal[:100] + "…") if len(goal) > 100 else goal
+        goal = (goal[:80] + "…") if len(goal) > 80 else goal
+        counts = [str(read_fm(s).get("status", "")).lower() for s in d.glob("Active-Work/**/STATUS.md")]
+        n_done = len(list(d.glob("Finished-Work/*/STATUS.md")))
+        summary = " \u00b7 ".join(x for x in (f"{counts.count('active')} active" if counts.count("active") else "", f"{counts.count('parked')} parked" if counts.count("parked") else "", f"{n_done} done" if n_done else "") if x)
         emoji = emoji_for(f.stem if re.match(r"^[^\w\s\-.]", f.stem) else d.name)
         lines.append(f"> - {emoji} **[[{f.relative_to(VAULT).with_suffix('').as_posix()}|{d.name}]]** {chips}".rstrip())
-        if goal:
-            lines.append(f">   <small>{goal}</small>")
+        if summary or goal:
+            dash = " \u2014 " if summary and goal else ""
+            lines.append(f">   <small>{summary}{dash}{goal}</small>")
     lines.append("> <!-- pj:end -->")
     path = BRAIN / "Home.md"
     text = path.read_text(encoding="utf-8")
@@ -739,18 +743,17 @@ def task_line(f, fm, extra):
     return [f"> - **[[{f.relative_to(VAULT).with_suffix('').as_posix()}|{title}]]** {chips}", f">   <small>{extra}</small>"]
 
 
-def write_blocked():
-    lines = []
+def blocked_rows():
+    rows = []
     for f in task_files():
         fm = read_fm(f)
         blocked = str(fm.get("blocked", "") or "")
-        if str(fm.get("status", "")).lower() == "done" or not blocked or blocked.lower().startswith("nothing"):
-            continue
-        lines += task_line(f, fm, "\U0001f6a7 " + short(blocked))
-    return replace_home_block("blk", lines or ["> Nothing is blocked. \U0001f389"])
+        if str(fm.get("status", "")).lower() != "done" and blocked and not blocked.lower().startswith("nothing"):
+            rows.append((f, fm, blocked))
+    return rows
 
 
-def write_gone_quiet():
+def quiet_rows():
     rows = []
     for f in task_files():
         fm = read_fm(f)
@@ -759,10 +762,72 @@ def write_gone_quiet():
         days = (date.today() - datetime.fromtimestamp(f.stat().st_mtime).date()).days
         if days >= 7:
             rows.append((days, f, fm))
+    return sorted(rows, key=lambda r: -r[0])[:8]
+
+
+def fix_items():
+    cache = json.loads(CHECK_CACHE.read_text()) if CHECK_CACHE.exists() else {}
+    return check_offline() + cache.get("found", []), cache
+
+
+def closed_this_week():
+    week = []
+    for f in (VAULT / "Projects").glob("*/Finished-Work/*/STATUS.md"):
+        fm = read_fm(f)
+        m = re.match(r"(\d{4}-\d{2}-\d{2})", str(fm.get("last_done", "")))
+        when = m.group(1) if m else datetime.fromtimestamp(f.stat().st_mtime).strftime("%Y-%m-%d")
+        if (date.today() - date.fromisoformat(when)).days <= 7:
+            week.append((when, str(fm.get("title", f.parent.name))))
+    return sorted(week, reverse=True)
+
+
+def retitle_card(label, suffix, first_right=False, folded=False):
+    """Updates the title line of a Home card (keeps its fold and first-right markers) so the count shows even when the card is collapsed."""
+    home = BRAIN / "Home.md"
+    text = home.read_text(encoding="utf-8")
+    kind = "card|first-right" if first_right else "card"
+    new_line = f"> [!{kind}]{'-' if folded else ''} {label}{suffix}"
+    new = re.sub(rf"^> \[!card(?:\|first-right)?\]-? {re.escape(label)}.*$", lambda _: new_line, text, count=1, flags=re.M)
+    if new != text:
+        home.write_text(new, encoding="utf-8")
+
+
+def write_needs_you():
+    """One card for everything that needs you: blocked tasks, active tasks gone quiet, and fields or PRs to fix."""
+    blocked, quiet = blocked_rows(), quiet_rows()
+    fixes, cache = fix_items()
     lines = []
-    for days, f, fm in sorted(rows, key=lambda r: -r[0])[:8]:
-        lines += task_line(f, fm, f"\U0001f4a4 quiet for {days} days. Next: {short(fm.get('next'), 80)}")
-    return replace_home_block("gq", lines or ["> Everything active has moved in the last 7 days. \U0001f389"])
+    if blocked:
+        lines += [">", f"> > [!group]+ \U0001f6a7 Blocked ({len(blocked)})", "> >"]
+        for f, fm, text in blocked:
+            lines += ["> " + l for l in task_line(f, fm, "\U0001f6a7 " + short(text))]
+    if quiet:
+        lines += [">", f"> > [!group]+ \U0001f4a4 Gone quiet ({len(quiet)})", "> >"]
+        for days, f, fm in quiet:
+            lines += ["> " + l for l in task_line(f, fm, f"\U0001f4a4 quiet for {days} days. Next: {short(fm.get('next'), 80)}")]
+    if fixes:
+        def mark(x):
+            low = x.lower()
+            icon = "\U0001f500" if "merged" in low or "closed" in low else "\U0001f3af" if "goal" in low else "\U0001f4e6" if "finish" in low else "\u26a0\ufe0f"
+            return f"> > - {icon} {x}"
+        lines += [">", f"> > [!group]+ \U0001f527 To fix ({len(fixes)})", "> >"] + [mark(x) for x in fixes]
+    if not lines:
+        lines = ["> All clear. \U0001f389"]
+    note = f"GitHub last checked {cache['checked']}." if cache.get("checked") else "GitHub not checked yet: run `brain.py check` (needs `gh_repo` in `.brain.json`)."
+    lines += [">", f"> <small>{note}</small>"]
+    total = len(blocked) + len(quiet) + len(fixes)
+    retitle_card("\U0001f6a8 Needs you", f" \u00b7 {total}" if total else "", first_right=True)
+    return replace_home_block("ny", lines)
+
+
+def write_stats_strip():
+    """The one-line summary under the intro on Home."""
+    tasks = [read_fm(f) for f in task_files()]
+    status = lambda s: sum(1 for fm in tasks if str(fm.get("status", "")).lower() == s)
+    fixes, _ = fix_items()
+    strip = (f"> \U0001f4ca **{status('active')}** active \u00b7 **{status('parked')}** parked \u00b7 **{len(blocked_rows())}** blocked"
+             f" \u00b7 **{len(closed_this_week())}** closed this week \u00b7 **{len(fixes)}** to fix")
+    return replace_home_block("st", [strip])
 
 
 def daily_notes():
@@ -776,7 +841,7 @@ def daily_notes():
 
 def write_dev_notes():
     lines = []
-    for day, f in daily_notes()[:8]:
+    for day, f in daily_notes()[:5]:
         n = len(re.findall(r"^- \d\d:\d\d ", f.read_text(encoding="utf-8"), re.M))
         lines.append(f"> - **[[{f.relative_to(VAULT).with_suffix('').as_posix()}|{f.stem}]]**")
         if n:
@@ -883,27 +948,16 @@ def write_today():
         else:
             head = f"\U0001f4aa **0 of {len(items)} done**, you've got this. {link}"
         lines += [f"> {head}", ">"] + [f"> - {'✅' if d else '⬜'} {'~~' + s + '~~' if d else s}" for d, s in items]
-    week = []
-    for f in (VAULT / "Projects").glob("*/Finished-Work/*/STATUS.md"):
-        fm = read_fm(f)
-        m = re.match(r"(\d{4}-\d{2}-\d{2})", str(fm.get("last_done", "")))
-        when = m.group(1) if m else datetime.fromtimestamp(f.stat().st_mtime).strftime("%Y-%m-%d")
-        if (date.today() - date.fromisoformat(when)).days <= 7:
-            week.append((when, str(fm.get("title", f.parent.name))))
+    week = closed_this_week()
     if week:
         lines += [">", "> \U0001f3c6 **Closed this week**"] + [f"> - ✅ {title}" for _, title in sorted(week, reverse=True)[:6]]
-    title = "> [!card|first-right]- \U0001f3af Today" + (f" \u00b7 {done} of {len(items)} done" if note and items else "")
-    home = BRAIN / "Home.md"
-    text = home.read_text(encoding="utf-8")
-    retitled = re.sub(r"^> \[!card(?:\|first-right)?\]-? \U0001f3af Today.*$", lambda _: title, text, count=1, flags=re.M)
-    if retitled != text:
-        home.write_text(retitled, encoding="utf-8")
+    retitle_card("\U0001f3af Today", f" \u00b7 {done} of {len(items)} done" if note and items else "", folded=True)
     return replace_home_block("td", lines)
 
 
 def write_home_lists():
     """Refreshes every generated list on Home: Projects, Blocked, Gone Quiet, Dev Notes, Side Quests, 1-2-1s."""
-    return any([write_today(), write_project_pages(), write_projects(), write_blocked(), write_gone_quiet(), write_dev_notes(), write_side_quests(), write_one_to_ones()])
+    return any([write_today(), write_project_pages(), write_projects(), write_needs_you(), write_stats_strip(), write_dev_notes(), write_side_quests(), write_one_to_ones()])
 
 
 def write_current_work():
@@ -927,7 +981,7 @@ def write_current_work():
         groups.setdefault(status, []).append(f"> - [[{f.relative_to(VAULT).with_suffix('').as_posix()}|{title}]] {label}".rstrip())
     lines = ["> <!-- cw:start -->"]
     for status in sorted(groups):
-        lines += [">", f"> > [!group]+ {status.capitalize()} ({len(groups[status])})", "> >"] + ["> " + g for g in groups[status]]
+        lines += [">", f"> > [!group]{'-' if status == 'parked' else '+'} {status.capitalize()} ({len(groups[status])})", "> >"] + ["> " + g for g in groups[status]]
     lines.append("> <!-- cw:end -->")
     path = BRAIN / "Home.md"
     text = path.read_text(encoding="utf-8")
@@ -1002,23 +1056,9 @@ def check_github():
 
 
 def write_needs_attention():
-    """Rewrites the Needs attention list in Home.md (between chk markers) from the field checks and the cached GitHub check."""
-    cache = json.loads(CHECK_CACHE.read_text()) if CHECK_CACHE.exists() else {}
-    items = check_offline() + cache.get("found", [])
-    note = f"GitHub last checked {cache['checked']}." if cache.get("checked") else "GitHub not checked yet: run `brain.py check` (needs `gh_repo` in `.brain.json`)."
-    def mark(x):
-        low = x.lower()
-        icon = "\U0001f500" if "merged" in low or "closed" in low else "\U0001f3af" if "goal" in low else "\U0001f4e6" if "finish" in low else "\u26a0\ufe0f"
-        return f"> - {icon} {x}"
-    body = [mark(x) for x in items] or ["> Nothing to fix. \U0001f389"]
-    lines = ["> <!-- chk:start -->", *body, ">", f"> *{note}*", "> <!-- chk:end -->"]
-    path = BRAIN / "Home.md"
-    text = path.read_text(encoding="utf-8")
-    new = re.sub(r"> <!-- chk:start -->.*?> <!-- chk:end -->", lambda _: "\n".join(lines), text, flags=re.S)
-    if new == text:
-        return len(items), False
-    path.write_text(new, encoding="utf-8")
-    return len(items), True
+    """Refreshes the Needs you card; returns (number of fields or PRs to fix, whether Home changed)."""
+    changed = write_needs_you()
+    return len(fix_items()[0]), changed
 
 
 def write_tag_css():

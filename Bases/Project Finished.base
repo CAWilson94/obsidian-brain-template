@@ -1,0 +1,20 @@
+filters:
+  and:
+    - 'file.name == "STATUS"'
+    - 'file.inFolder(this.file.folder)'
+    - 'status == "done"'
+properties:
+  title:
+    displayName: Task
+  last_done:
+    displayName: How it ended
+views:
+  - type: table
+    name: Finished tasks
+    order:
+      - title
+      - last_done
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC

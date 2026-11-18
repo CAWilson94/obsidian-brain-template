@@ -77,6 +77,65 @@ def yaml_value(value):
     return v
 
 
+PROJECT_SECTIONS = (
+    "> [!info] \U0001f5fa\ufe0f Y'know, what this project is for and where its tasks live. Tasks are the STATUS.md files in `Active-Work/`.\n\n"
+    "## \U0001f517 Links\n"
+    "> [!note] \U0001f9f5 Y'know, the PRs, issues and threads for the whole project. Write them here; the list below is gathered from the tasks.\n\n"
+    "<!-- links:start -->\n<!-- links:end -->\n\n"
+    "## \U0001f6a6 Tasks in this project\n![[Project Tasks.base]]\n\n"
+    "## \u2705 Finished\n![[Project Finished.base]]\n\n"
+    "## \U0001f9e0 Notes\n![[Project Work Notes.base]]\n"
+)
+
+
+def link_label(url):
+    m = re.match(r"https://github\.com/([^/]+)/([^/]+)/(pull|issues)/(\d+)", url)
+    if m:
+        return f"{m.group(2)}#{m.group(4)}"
+    return re.sub(r"^https?://([^/]+).*$", r"\1", url)
+
+
+def project_links_block(project_dir):
+    """The lines for a project's `links` roll-up: every PR, issue and URL from its tasks' pr / issue / links fields, once each."""
+    repo, seen, lines = gh_repo(), set(), []
+    for f in sorted([*project_dir.glob("Active-Work/**/STATUS.md"), *project_dir.glob("Finished-Work/**/STATUS.md")]):
+        fm = read_fm(f)
+        title = str(fm.get("title", f.parent.name))
+        entries = []
+        for n in fm.get("pr", []) if isinstance(fm.get("pr"), list) else []:
+            if str(n).isdigit():
+                entries.append(("\U0001f500", f"PR #{n}", f"https://github.com/{repo}/pull/{n}" if repo else ""))
+        for key, icon in (("issue", "\U0001f3ab"), ("links", "\U0001f517")):
+            for u in fm.get(key, []) if isinstance(fm.get(key), list) else []:
+                if str(u).startswith("http"):
+                    entries.append((icon, link_label(str(u)), str(u)))
+        for icon, label, url in entries:
+            if url in seen and url:
+                continue
+            seen.add(url)
+            lines.append(f"> - {icon} " + (f"[{label}]({url})" if url else label) + f" \u00b7 <small>{title}</small>")
+    return lines
+
+
+def write_project_pages():
+    """Refreshes the generated Links roll-up (between links markers) in every project note."""
+    changed = False
+    for d in sorted((VAULT / "Projects").glob("*/")):
+        f = find_project_file(d.name)
+        if not f:
+            continue
+        text = f.read_text(encoding="utf-8")
+        if "<!-- links:start -->" not in text:
+            continue
+        rows = project_links_block(d) or ["<small>No PRs or issues on the tasks yet.</small>"]
+        body = "**From the tasks**\n\n" + "\n".join(r[2:] if r.startswith("> ") else r for r in rows)
+        new = re.sub(r"<!-- links:start -->.*?<!-- links:end -->", lambda _: "<!-- links:start -->\n" + body + "\n<!-- links:end -->", text, flags=re.S)
+        if new != text:
+            f.write_text(new, encoding="utf-8")
+            changed = True
+    return changed
+
+
 def find_project_file(project):
     """The project's own note in Projects/<project>/ (type: project), whether or not its file name starts with an emoji."""
     folder = VAULT / "Projects" / project
@@ -96,9 +155,7 @@ def make_project(name, goal="", tags=None, emoji=""):
     title = f"{emoji} {name}"
     path = folder / f"{title}.md"
     tag_list = tags if tags is not None else [slugify(name)]
-    body = (f"---\ntype: project\nstatus: active\ntags: [{', '.join(tag_list)}]\ngoal: {yaml_value(goal)}\n---\n\n# {title}\n"
-            "> [!info] \U0001f5fa\ufe0f Y'know, what this project is for and where its tasks live. Tasks are the STATUS.md files in `Active-Work/`.\n\n"
-            "## \U0001f6a6 Tasks in this project\n![[Project Tasks.base]]\n")
+    body = (f"---\ntype: project\nstatus: active\ntags: [{', '.join(tag_list)}]\ngoal: {yaml_value(goal)}\n---\n\n# {title}\n" + PROJECT_SECTIONS)
     (folder / "Active-Work").mkdir(parents=True, exist_ok=True)
     path.write_text(body, encoding="utf-8")
     write_tag_css()
@@ -753,7 +810,7 @@ def write_one_to_ones():
 
 def write_home_lists():
     """Refreshes every generated list on Home: Projects, Blocked, Gone Quiet, Dev Notes, Side Quests, 1-2-1s."""
-    return any([write_projects(), write_blocked(), write_gone_quiet(), write_dev_notes(), write_side_quests(), write_one_to_ones()])
+    return any([write_project_pages(), write_projects(), write_blocked(), write_gone_quiet(), write_dev_notes(), write_side_quests(), write_one_to_ones()])
 
 
 def write_current_work():

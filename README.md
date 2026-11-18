@@ -62,6 +62,14 @@ Run `./install.sh` first (the SessionStart hook reads the path it saves). Then a
 ```
 `auto` also rewrites the Current Work list and the Needs attention card in `Home.md`. It never calls GitHub, so it stays fast. Run `brain.py check` by hand for that.
 
+### Keep Home fresh while you edit (optional, macOS)
+Home's lists are rewritten by `brain.py`. The Stop hook does it when a Claude session ends; this watcher does it as soon as you save a **project note** (`Projects/<name>/<name>.md`, for example after changing its goal). It is push based, so it uses no polling and no model calls.
+```bash
+brew install fswatch
+scripts/install_watch.sh          # needs install.sh run first; turn off with: scripts/install_watch.sh --off
+```
+It installs a login launch agent that runs a copy of `scripts/watch_projects.sh` from `~/.local/share/obsidian-brain/` (macOS will not let launchd run scripts that sit in `~/Documents`). Logs: `~/Library/Logs/obsidian-brain-watch.log`. Only project notes are watched, not task notes. Re-run `install_watch.sh` after you update `watch_projects.sh`.
+
 ### Good to know
 - **Tag colours work in the Home lists but not inside Bases tables, lists or cards.** Obsidian draws a Bases tag without its name in the page, so CSS cannot colour tags per name there. That is why Home's Current Work list is generated as text with real `#tags`. Use Reading view (Cmd+E).
 - `install.sh` replaces an existing *link* with the same skill name, but skips a real folder.

@@ -834,7 +834,7 @@ def write_current_work():
         groups.setdefault(status, []).append(f"> - [[{f.relative_to(VAULT).with_suffix('').as_posix()}|{title}]] {label}".rstrip())
     lines = ["> <!-- cw:start -->"]
     for status in sorted(groups):
-        lines += [">", f"> **{status.capitalize()}**", ">"] + groups[status]
+        lines += [">", f"> > [!group]+ {status.capitalize()} ({len(groups[status])})", "> >"] + ["> " + g for g in groups[status]]
     lines.append("> <!-- cw:end -->")
     path = BRAIN / "Home.md"
     text = path.read_text(encoding="utf-8")

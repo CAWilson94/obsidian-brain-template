@@ -88,3 +88,11 @@
 .home-grid .callout strong { font-weight: 600; }
 .home-grid a.tag { font-size: 0.82em; padding: 1px 7px; }
 .home-grid .callout[data-callout="intro"] { font-size: 1.05em; padding: 14px 18px; }
+
+/* Notion-like colour and links on Home */
+body.theme-light .markdown-preview-view.home-grid { --text-normal: #37352f; }
+.markdown-preview-view.home-grid { -webkit-font-smoothing: antialiased; }
+.home-grid .callout li > a.internal-link {
+  font-weight: 500;
+  border-bottom: 1px solid rgba(55, 53, 47, 0.25);
+}

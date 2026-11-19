@@ -13,6 +13,7 @@ A work brain for [Obsidian](https://obsidian.md) with a Notion-style Home page. 
 ## 🔁 How you use it
 | When | You do | What happens |
 |---|---|---|
+| Before a non-trivial task | `/brief` | Turns messy context into a short brief with acceptance criteria, saved in the task folder |
 | Start a project | `/new-project` | Asks for a goal, makes the project page |
 | Work on a task | Edit its `STATUS.md` | Home updates (Stop hook, or the optional watcher) |
 | Have a thought | say "log this" | One line goes into today's daily note |

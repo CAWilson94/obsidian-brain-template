@@ -24,7 +24,7 @@ TEMPLATES = {"daily": "Daily Dev Note", "side-quest": "Side Quest", "epic": "Epi
 
 
 def fmt(pattern, now):
-    return (pattern.replace("YYYY", f"{now:%Y}").replace("MM", f"{now:%m}").replace("DD", f"{now:%d}")
+    return (pattern.replace("MMMM", f"{now:%B}").replace("YYYY", f"{now:%Y}").replace("MM", f"{now:%m}").replace("DD", f"{now:%d}")
             .replace("HH", f"{now:%H}").replace("mm", f"{now:%M}"))
 
 
@@ -39,7 +39,7 @@ def pick_emoji():
 def render(template_name, now, person=""):
     text = (BRAIN / "Templates" / f"{template_name}.md").read_text(encoding="utf-8")
     text = re.sub(r"\A<%\*.*?-%>\n", "", text, flags=re.S)
-    text = re.sub(r'<%\s*tp\.date\.now\("([^"]+)"\)\s*%>', lambda m: fmt(m.group(1), now), text)
+    text = re.sub(r'<%\s*tp\.date\.now\("([^"]+)"\)(\.toLowerCase\(\))?\s*%>', lambda m: fmt(m.group(1), now).lower() if m.group(2) else fmt(m.group(1), now), text)
     return text.replace("<% person %>", person)
 
 

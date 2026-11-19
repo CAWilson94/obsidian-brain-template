@@ -1,7 +1,7 @@
 ---
 type: daily
 date: 2026-01-12
-tags: [2026]
+tags: [january-2026-dev]
 ---
 
 ## Stand-up

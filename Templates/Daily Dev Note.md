@@ -5,7 +5,7 @@ await tp.file.rename(`${emoji} Daily Dev Note ${tp.date.now("YYYY-MM-DD")}`);
 ---
 type: daily
 date: <% tp.date.now("YYYY-MM-DD") %>
-tags: [<% tp.date.now("YYYY") %>]
+tags: [<% tp.date.now("MMMM-YYYY").toLowerCase() %>-dev]
 ---
 
 ## Stand-up

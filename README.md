@@ -18,6 +18,8 @@ A work-brain vault for Obsidian: a Home page with a banner, live tables of tasks
 
 
 ## Scripts (for AI and the terminal, no Obsidian needed)
+`scripts/brain.py` is a thin command line; the code lives in `scripts/brainlib/`, one module per job (`common`, `notes`, `home`, `checks`, `stats`, `dashboard`, `css`, `autolog`). Standard library only.
+
 `scripts/brain.py` builds notes from the same Templater templates, so the headings never drift:
 - `python3 scripts/brain.py new daily` (also `side-quest "title"`, `epic "title"`, `1-2-1 Person`, `project Name`)
 - `python3 scripts/brain.py log "[finding] text"` appends a timestamped bullet to today's Daily Dev Note (tags: finding, decision, pr, blocked)

@@ -33,20 +33,22 @@ Templates/  Bases/  scripts/  skills/  hooks/  rules/
 `STATUS.md` is the only file the tools read. Details: [docs/task-format.md](docs/task-format.md).
 
 ## 🛠️ Commands
-Run with `python3 scripts/brain.py <command>`. Nothing is ever overwritten. Most are called for you, so you rarely type them.
+Run with `python3 scripts/brain.py <command>`. Nothing is ever overwritten. **Skills** are the slash commands and phrases you use in Claude Code (`/new-project`, "log this"). **Commands** are what they run underneath. Most are called for you.
 
-| Command | Does | Called by |
-|---|---|---|
-| `project "Name" "goal" [emoji]` | New project page | `/new-project` |
-| `task "Project" "Title" "goal" ["next"]` | New task from the STATUS template | `/new-project` |
-| `finish "Project" "task-folder"` | Move a done task to `Finished-Work/`, fix links | `/clean-notes`, `/close-out` |
-| `log "[finding] text"` | Add a line to today's daily note | the `log` skill. Run it yourself for free (no model) |
-| `currentwork` | Refresh the lists on Home | `/new-project`, `/close-out`, the file watcher |
-| `check` | Find fields to fix and merged PRs (needs `gh`) | `/clean-notes`. Run it yourself to refresh GitHub data |
-| `githubnotes` | Make and update the GitHub notes (needs `gh`) | `auto`, in the background. Run it yourself to force a refresh |
-| `auto` | Log `[auto]` lines, refresh Home | the Stop hook |
-| `new daily` / `side-quest` / `epic` / `1-2-1` | New note from a template | **you** (or Templater in Obsidian) |
-| `stats`, `dashboard`, `css` | Stats page, dashboard page, tag colours | `auto` |
+| Command | Does | Run by a skill | Run by a hook or the watcher | You run it |
+|---|---|---|---|---|
+| `project "Name" "goal" [emoji]` | New project page | `/new-project` | | |
+| `task "Project" "Title" "goal" ["next"]` | New task from the STATUS template | `/new-project` | | |
+| `finish "Project" "task-folder"` | Move a done task to `Finished-Work/`, fix links | `/clean-notes`, `/close-out` | | sometimes |
+| `log "[finding] text"` | Add a line to today's daily note | "log this" (`log` skill) | | free alternative (no model) |
+| `currentwork` | Refresh the lists on Home | `/new-project`, `/close-out` | the file watcher | rarely |
+| `check` | Find fields to fix and merged PRs (needs `gh`) | `/clean-notes` | | to refresh GitHub data |
+| `githubnotes` | Make and update the GitHub notes (needs `gh`) | | `auto` runs it in the background | to force a refresh |
+| `auto` | Log `[auto]` lines, refresh Home | | the Stop hook | |
+| `new daily` / `side-quest` / `epic` / `1-2-1` | New note from a template | **none** | | **yes** (or Templater in Obsidian) |
+| `stats`, `dashboard`, `css` | Stats page, dashboard page, tag colours | | `auto` runs them | rarely |
+
+`/cha-generic-review` doesn't call `brain.py`.
 
 ## 🔌 Optional extras
 - **Hooks** (task list at session start, auto-log, auto-refresh) and the **file watcher**: [docs/hooks-and-watcher.md](docs/hooks-and-watcher.md).

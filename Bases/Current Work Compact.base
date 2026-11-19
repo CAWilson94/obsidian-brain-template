@@ -18,4 +18,24 @@ views:
       direction: ASC
     order:
       - title
-      - formula.project
+      - file.tags
+      - file.backlinks
+    sort:
+      - property: file.tags
+        direction: DESC
+      - property: title
+        direction: ASC
+  - type: list
+    name: List
+    groupBy:
+      property: status
+      direction: ASC
+    order:
+      - title
+      - file.tags
+    sort:
+      - property: file.name
+        direction: ASC
+    cardSize: 140
+    imageFit: contain
+    markers: none

@@ -17,6 +17,7 @@ from pathlib import Path
 
 BRAIN = Path(__file__).resolve().parent.parent
 VAULT = next((p for p in [BRAIN, *BRAIN.parents] if (p / ".obsidian").is_dir()), BRAIN)
+HOME_NOTE = next((p for p in (BRAIN / "🏡 Home.md", BRAIN / "Home.md") if p.exists()), BRAIN / "🏡 Home.md")
 STATE = Path(os.environ.get("BRAIN_STATE", Path.home() / ".cache" / "obsidian-brain" / "auto_log_state.json"))
 TAGS = ("finding", "decision", "pr", "blocked", "auto")
 FOLDERS = {"daily": "Daily", "side-quest": "SideQuests", "epic": "Epics", "1-2-1": "Meetings", "project": "Projects"}
@@ -80,12 +81,28 @@ def yaml_value(value):
 PROJECT_SECTIONS = (
     "> [!info] \U0001f5fa\ufe0f Y'know, what this project is for and where its tasks live. Tasks are the STATUS.md files in `Active-Work/`.\n\n"
     "## \U0001f517 Links\n"
-    "> [!note] \U0001f9f5 Y'know, the PRs, issues and threads for the whole project. Write them here; the list below is gathered from the tasks.\n\n"
-    "<!-- links:start -->\n<!-- links:end -->\n\n"
-    "## \U0001f6a6 Tasks in this project\n![[Project Tasks.base]]\n\n"
-    "## \u2705 Finished\n![[Project Finished.base]]\n\n"
+    "> [!note] \U0001f9f5 Y'know, the epic, issues and PRs for the whole project, one row each. Each is a note in `GitHub/`; the Task column links the task that uses it.\n\n"
+    "![[Project GitHub.base]]\n\n"
+    "## \U0001f6a6 Tasks\n![[Project All Tasks.base]]\n\n"
     "## \U0001f9e0 Notes\n![[Project Work Notes.base]]\n"
 )
+
+
+GITHUB_NOTES_STAMP = Path(os.environ.get("BRAIN_GITHUB_STAMP", Path.home() / ".cache" / "obsidian-brain" / "github_notes.stamp"))
+
+
+def kick_github_notes(min_minutes=20):
+    """Starts github_notes.py in the background (it calls gh, so it can take longer than the hook allows), at most once per min_minutes."""
+    try:
+        if GITHUB_NOTES_STAMP.exists() and (datetime.now().timestamp() - GITHUB_NOTES_STAMP.stat().st_mtime) < min_minutes * 60:
+            return False
+        GITHUB_NOTES_STAMP.parent.mkdir(parents=True, exist_ok=True)
+        GITHUB_NOTES_STAMP.touch()
+        subprocess.Popen([sys.executable, "-I", str(Path(__file__).with_name("github_notes.py"))],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        return True
+    except OSError:
+        return False
 
 
 def link_label(url):
@@ -95,6 +112,17 @@ def link_label(url):
     return re.sub(r"^https?://([^/]+).*$", r"\1", url)
 
 
+def pr_numbers(fm):
+    """The PR numbers in a task's `pr:` list. Each entry is a number or a pull request URL (a URL is clickable in Obsidian); anything else is skipped."""
+    raw = fm.get("pr") if isinstance(fm.get("pr"), list) else []
+    found = []
+    for item in raw:
+        m = re.fullmatch(r"(\d+)|https?://github\.com/[^/\s]+/[^/\s]+/pull/(\d+)/?", str(item).strip())
+        if m:
+            found.append(m.group(1) or m.group(2))
+    return found
+
+
 def project_links_block(project_dir):
     """The lines for a project's `links` roll-up: every PR, issue and URL from its tasks' pr / issue / links fields, once each."""
     repo, seen, lines = gh_repo(), set(), []
@@ -102,9 +130,8 @@ def project_links_block(project_dir):
         fm = read_fm(f)
         title = str(fm.get("title", f.parent.name))
         entries = []
-        for n in fm.get("pr", []) if isinstance(fm.get("pr"), list) else []:
-            if str(n).isdigit():
-                entries.append(("\U0001f500", f"PR #{n}", f"https://github.com/{repo}/pull/{n}" if repo else ""))
+        for n in pr_numbers(fm):
+            entries.append(("\U0001f500", f"PR #{n}", f"https://github.com/{repo}/pull/{n}" if repo else ""))
         for key, icon in (("issue", "\U0001f3ab"), ("links", "\U0001f517")):
             for u in fm.get(key, []) if isinstance(fm.get(key), list) else []:
                 if str(u).startswith("http"):
@@ -702,7 +729,7 @@ def write_projects():
             dash = " \u2014 " if summary and goal else ""
             lines.append(f">   <small>{summary}{dash}{goal}</small>")
     lines.append("> <!-- pj:end -->")
-    path = BRAIN / "Home.md"
+    path = HOME_NOTE
     text = path.read_text(encoding="utf-8")
     new = re.sub(r"> <!-- pj:start -->.*?> <!-- pj:end -->", lambda _: "\n".join(lines), text, flags=re.S)
     if new == text:
@@ -714,7 +741,7 @@ def write_projects():
 def replace_home_block(marker, lines):
     """Rewrites the part of Home.md between `<!-- marker:start -->` and `<!-- marker:end -->` (inside a callout) with the given list lines."""
     block = [f"> <!-- {marker}:start -->", *lines, f"> <!-- {marker}:end -->"]
-    path = BRAIN / "Home.md"
+    path = HOME_NOTE
     text = path.read_text(encoding="utf-8")
     new = re.sub(rf"> <!-- {marker}:start -->.*?> <!-- {marker}:end -->", lambda _: "\n".join(block), text, flags=re.S)
     if new == text:
@@ -783,7 +810,7 @@ def closed_this_week():
 
 def retitle_card(label, suffix, first_right=False, folded=False):
     """Updates the title line of a Home card (keeps its fold and first-right markers) so the count shows even when the card is collapsed."""
-    home = BRAIN / "Home.md"
+    home = HOME_NOTE
     text = home.read_text(encoding="utf-8")
     kind = "card|first-right" if first_right else "card"
     new_line = f"> [!{kind}]{'-' if folded else ''} {label}{suffix}"
@@ -962,7 +989,7 @@ def write_current_work():
             continue
         tags = fm.get("tags") if isinstance(fm.get("tags"), list) else []
         label = " ".join("#" + str(x).lstrip("#") for x in tags if x)
-        prs = fm.get("pr") if isinstance(fm.get("pr"), list) else []
+        prs = pr_numbers(fm)
         repo = gh_repo()
         label += "".join(f" [PR #{n}](https://github.com/{repo}/pull/{n})" if repo else f" PR #{n}" for n in prs)
         issues = fm.get("issue") if isinstance(fm.get("issue"), list) else []
@@ -973,7 +1000,7 @@ def write_current_work():
     for status in sorted(groups):
         lines += [">", f"> > [!group]{'-' if status == 'parked' else '+'} {status.capitalize()} ({len(groups[status])})", "> >"] + ["> " + g for g in groups[status]]
     lines.append("> <!-- cw:end -->")
-    path = BRAIN / "Home.md"
+    path = HOME_NOTE
     text = path.read_text(encoding="utf-8")
     new = re.sub(r"> <!-- cw:start -->.*?> <!-- cw:end -->", lambda _: "\n".join(lines), text, flags=re.S)
     if new == text:
@@ -1005,9 +1032,9 @@ def check_offline():
         for key in ("title", "status", "goal", "next"):
             if not fm.get(key):
                 found.append(f"{name}: **{key}** is empty")
-        for n in fm.get("pr", []) if isinstance(fm.get("pr"), list) else []:
-            if not str(n).isdigit():
-                found.append(f"{name}: `pr:` holds `{n}`, which is not a PR number (use `issue:` or `links:` for URLs)")
+        listed = fm.get("pr") if isinstance(fm.get("pr"), list) else []
+        if len(pr_numbers(fm)) != len(listed):
+            found.append(f"{name}: `pr:` holds an entry that is not a PR number or a github.com pull request URL (use `issue:` or `links:` for other URLs)")
     for d in sorted((VAULT / "Projects").glob("*/")):
         for f in d.glob("*.md"):
             fm = read_fm(f)
@@ -1030,9 +1057,7 @@ def check_github():
         fm = read_fm(f)
         name = str(fm.get("title", f.parent.name))
         status = str(fm.get("status", "")).lower()
-        for n in fm.get("pr", []) if isinstance(fm.get("pr"), list) else []:
-            if not str(n).isdigit():
-                continue
+        for n in pr_numbers(fm):
             r = subprocess.run(["gh", "pr", "view", str(n), "-R", repo, "--json", "state"],
                                capture_output=True, text=True)
             if r.returncode != 0:
@@ -1092,6 +1117,8 @@ if __name__ == "__main__":
         print("Dashboard.html rewritten" if write_dashboard() else "Dashboard.html unchanged")
     elif cmd == "css":
         print("tag-colours.css rewritten" if write_tag_css() else "tag-colours.css unchanged")
+    elif cmd == "githubnotes":
+        subprocess.run([sys.executable, "-I", str(Path(__file__).with_name("github_notes.py")), *args])
     elif cmd == "currentwork":
         write_tag_css()
         write_home_lists()
@@ -1105,6 +1132,7 @@ if __name__ == "__main__":
         write_home_lists()
         write_current_work()
         write_needs_attention()
+        kick_github_notes()
         print(f"auto-logged {auto()} line(s)")
     else:
         sys.exit(__doc__)

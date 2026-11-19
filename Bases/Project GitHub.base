@@ -1,0 +1,36 @@
+filters:
+  and:
+    - file.inFolder(this.file.folder)
+    - type == "github"
+formulas:
+  status_icon: if(state.contains("merged"), "🐙 merged", if(state.contains("closed"), "❌ closed", if(state.contains("draft"), "📝 draft", "📌 open")))
+properties:
+  kind:
+    displayName: Kind
+  url:
+    displayName: Link
+  title:
+    displayName: Title
+  formula.status_icon:
+    displayName: State
+  tasks:
+    displayName: Task
+views:
+  - type: table
+    name: GitHub items
+    order:
+      - kind
+      - url
+      - formula.status_icon
+      - title
+      - tasks
+    sort:
+      - property: formula.status_icon
+        direction: ASC
+      - property: kind
+        direction: DESC
+      - property: title
+        direction: ASC
+    columnSize:
+      note.url: 131
+      note.title: 362

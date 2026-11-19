@@ -90,11 +90,16 @@ Projects/
         HANDOFF-<date>.md        handoff for a fresh session, in the same folder
     Finished-Work/
       <task-folder>/             a done task, moved here with `brain.py finish`
+    GitHub/
+      <repo>-pr-<n>.md           one note per PR or issue the tasks use, kept in sync by `brain.py githubnotes`
 ```
 - **`STATUS.md` is the only file the tools read.** Everything else in the task folder is for you.
 - **One `STATUS.md` per task folder.** The folder name is the task's name, so every card is called `STATUS.md` on purpose.
 - **A handoff lives in its task folder** as `HANDOFF-YYYY-MM-DD.md`, and the task's `handoff:` field names the file (use `none` if there isn't one). Start one from `Templates/HANDOFF.md`.
 - **A done task moves to `Finished-Work/`.** Set `status: done`, then run `python3 scripts/brain.py finish <project> <task-folder>`: it moves the whole folder and fixes any links to it. `Active-Work/` then only holds live tasks, and `brain.py check` flags a done task left behind.
+- **`last_done` is ONE short line**, overwritten each time. The history goes in the task's body under `## Live Notes`, one `### YYYY-MM-DD` heading per day, newest at the bottom.
+- **`pr:` takes full URLs** so they are clickable (`pr: ['https://github.com/owner/repo/pull/1']`). A bare number also works when `gh_repo` is set in `.brain.json`.
+- **GitHub notes:** `python3 scripts/brain.py githubnotes` makes one note per PR or issue under `Projects/<project>/GitHub/` (needs `gh`; `brain.py auto` runs it in the background at most every 20 minutes). The project page lists them in a table, with a link to each task that uses them. Add `"epics": ["owner/repo#123"]` to `.brain.json` to mark issues as epics.
 - **Make them with `/new-project`** (a project, then a task when you ask), or copy `Templates/STATUS.md` into a new task folder by hand.
 
 ## Tasks
@@ -103,7 +108,7 @@ A task is a `STATUS.md` file in `Projects/<project>/Active-Work/<task>/`. Start 
 ## Properties (frontmatter)
 | Note | Properties |
 |---|---|
-| Task (`STATUS.md`) | title, pr, issue, links, status (active, parked, done), goal, last_done, next, blocked, handoff |
+| Task (`STATUS.md`) | title, tags, pr, issue, links, status (active, parked, done), goal, last_done (one line), next, blocked, handoff |
 | Daily | type, date, tags |
 | 1-2-1 | type, person, date, tags |
 | Epic | type, status, tags, created, issue, link |

@@ -1,6 +1,6 @@
 ---
 # 📝 Obsidian reads this block as YAML: wrap a value in 'single quotes' if it contains ": " or starts with a backtick (double any inner ').
-# 🏷️ tags = the project tag, so Home colours the chip.   🚦 status is one of: active, parked, done.   🔀 pr = PR numbers YOU raise, e.g. [123].   🎫 issue and 🔗 links take full URLs: in a [ ] list wrap each in single quotes, or use a "- " block list.
+# 🏷️ tags = the project tag, so Home colours the chip.   🚦 status is one of: active, parked, done.   🔀 pr = PRs YOU raise as full URLs so they are clickable, e.g. ['https://github.com/owner/repo/pull/123'] (a bare number like [123] also works).   🎫 issue and 🔗 links take full URLs: in a [ ] list wrap each in single quotes, or use a "- " block list.
 # ⚠️ Keep each field on one line with no "# comment" after the value: the hook and brain.py read the whole line.
 title: <plain-language name, 3 to 8 words; shown in the task list>
 tags: []

@@ -1,6 +1,6 @@
 ---
 name: new-project
-description: Start a new project in the brain vault (a Projects/<name>/ folder with a goal and a tasks table), and add a task to a project when asked. Use when the user says "new project", "open a new project", "/new-project", "add a task to <project>" or "new task". Always asks for the goal first. Never makes a task unless the user asks for one.
+description: Start a new project in the brain vault (a Projects/<name>/ folder with a goal, a GitHub items table and a Tasks table), and add a task to a project when asked. Use when the user says "new project", "open a new project", "/new-project", "add a task to <project>" or "new task". Always asks for the goal first. Never makes a task unless the user asks for one.
 argument-hint: <project name>
 ---
 
@@ -17,7 +17,7 @@ Run everything with the script the install saved:
 2. **Goal.** Ask: "What changes, and for whom? One line." This is required. If the user is unsure, offer one draft goal from what they told you and let them edit it. Do not make the project with an empty goal.
 3. **Emoji.** Pick ONE emoji for the title yourself, related to the project. It can be literal or an obscure joke (a sink emoji for a project about syncing). Tell the user which one you picked and why in a few words, so they can change it. Do not ask them to choose.
 4. Run: `... project "<name>" "<goal>" "<emoji>"`
-   It makes `Projects/<name>/<emoji> <name>.md` (type project, tag from the name, the goal, a tasks table) and an empty `Active-Work/` folder, adds the project to Home with a coloured `#tag`, and regenerates the tag colours. It refuses to touch a project that already exists. With no emoji it picks a random unused one.
+   It makes `Projects/<name>/<emoji> <name>.md` (type project, tag from the name, the goal, a GitHub items table, one Tasks table, a Notes table) and an empty `Active-Work/` folder, adds the project to Home with a coloured `#tag`, and regenerates the tag colours. It refuses to touch a project that already exists. With no emoji it picks a random unused one.
 5. Report the path in one line. Then ask once: "Want a first task in it?" If the answer is no, stop. Do not make one on your own.
 
 ## New task (only when the user asks)

@@ -11,9 +11,9 @@ Goal: update the task card once, at the end, instead of after every step. Keep i
 1. **Which task?** The one this session worked on. If it is unclear, ask once. Never touch another task (another session may own it).
 2. **Read** its `STATUS.md` (`title`, `status`, `last_done`, `next`, `pr`, `issue`) from `Projects/<project>/Active-Work/<task>/`.
 3. **Propose in one block** (from what happened in this session, not from memory or guesses):
-   - `last_done`: one or two sentences, with today's date, facts only. Keep the old text after "Before:" only if it still matters.
+   - `last_done`: ONE short line, facts only, overwritten each time. Put anything longer in the task's body under `## Live Notes` as a `### YYYY-MM-DD` heading (newest at the bottom). Never add `last_done_2` and the like.
    - `next`: ONE concrete step. If you cannot tell what it should be, ask for it. Do not invent it.
-   - New PR or issue numbers that came up (to add to `pr:` or `issue:`), if any.
+   - New PRs or issues that came up: add PRs you raised to `pr:` as full URLs (a bare number also works), and issues to `issue:`.
    - Status change if it applies: `parked`, or `done`.
 4. Ask once: "Write this?" On yes, edit only those header lines (single-quote values that contain `: `, double inner `'`), then:
    - If the status is now `done`: run `python3 -I "$(cat ~/.config/obsidian-brain/script)" finish "<project>" "<task folder>"`.

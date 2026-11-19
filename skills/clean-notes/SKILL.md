@@ -23,14 +23,14 @@ For each task, read its `STATUS.md` (`title`, `pr`, `last_done`, `next`, `blocke
 Ask ONE question with these options:
 | Choice | What you write |
 |---|---|
-| **Done** | `status: done`; `last_done:` = today + "PR #n merged <date>"; `next: none`; `blocked: nothing`; then move it: `python3 -I "$(cat ~/.config/obsidian-brain/script)" finish "<project>" "<task folder>"` (moves it to `Finished-Work/` and fixes links) |
-| **Keep, new next step** | the user gives the next step; update `next`, drop stale `blocked`, add the merge to `last_done` |
+| **Done** | `status: done`; `last_done:` = ONE short line such as "PR #n merged <date>" (history goes under `## Live Notes`); `next: none`; `blocked: nothing`; then move it: `python3 -I "$(cat ~/.config/obsidian-brain/script)" finish "<project>" "<task folder>"` (moves it to `Finished-Work/` and fixes links) |
+| **Keep, new next step** | the user gives the next step; update `next`, drop stale `blocked`, set `last_done` to one short line about the merge |
 | **Park** | `status: parked`; ask the user for the one next step |
 | **Skip** | write nothing |
 
 Rules:
 - Never close a task, or invent a next step, without their answer. A follow-up step is their decision.
-- When a task has several `pr:` numbers, check them all before asking.
+- When a task has several `pr:` entries (full URLs or numbers), check them all before asking.
 - Edit only the header lines. Single-quote values that contain `: ` and double inner `'`. Keep the other fields as they are.
 
 ## 2. Empty project goal (one project per turn)

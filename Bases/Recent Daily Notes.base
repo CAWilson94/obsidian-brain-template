@@ -1,13 +1,14 @@
 filters:
   and:
-    - 'type == "daily"'
+    - type == "daily"
 views:
   - type: table
     name: Recent daily notes
-    limit: 15
     order:
       - file.name
       - date
+      - tags
     sort:
       - property: date
         direction: DESC
+    limit: 15

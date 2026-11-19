@@ -1,10 +1,10 @@
 filters:
   and:
-    - 'file.name == "STATUS"'
-    - 'file.inFolder("Projects")'
-    - 'status != "done"'
+    - file.name == "STATUS"
+    - file.inFolder("Projects")
+    - status != "done"
 formulas:
-  project: 'file.folder.replace(/^Projects\//, "").replace(/\/Active-Work.*$/, "")'
+  project: file.folder.replace(/^Projects\//, "").replace(/\/Active-Work.*$/, "")
 properties:
   title:
     displayName: Task
@@ -22,11 +22,9 @@ views:
       direction: ASC
     order:
       - title
-      - formula.project
       - status
-      - next
+      - file.tags
       - last_done
-      - file.mtime
   - type: table
     name: By project
     groupBy:

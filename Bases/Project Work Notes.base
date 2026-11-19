@@ -1,16 +1,17 @@
 filters:
   and:
-    - 'file.ext == "md"'
-    - 'file.inFolder(this.file.folder)'
-    - 'file.name != "STATUS"'
-    - 'file.path != this.file.path'
+    - file.ext == "md"
+    - file.inFolder(this.file.folder)
+    - file.name != "STATUS"
+    - file.path != this.file.path
+    - '!file.path.contains("/GitHub/")'
 views:
   - type: table
     name: Notes in this project
-    limit: 20
     order:
       - file.name
       - file.mtime
     sort:
       - property: file.mtime
         direction: DESC
+    limit: 100

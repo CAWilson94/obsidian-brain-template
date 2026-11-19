@@ -1,6 +1,6 @@
 filters:
   and:
-    - 'type == "epic"'
+    - type == "epic"
 views:
   - type: table
     name: Epics

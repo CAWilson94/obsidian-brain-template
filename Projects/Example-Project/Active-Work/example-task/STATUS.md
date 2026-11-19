@@ -1,5 +1,6 @@
 ---
 title: Example task
+tags: [example]
 pr: []
 issue: []
 links: []

@@ -1,6 +1,6 @@
 filters:
   and:
-    - 'type == "one-to-one"'
+    - type == "one-to-one"
 views:
   - type: table
     name: 1-2-1s

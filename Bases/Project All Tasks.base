@@ -1,0 +1,57 @@
+filters:
+  and:
+    - file.name == "STATUS"
+    - file.inFolder(this.file.folder)
+formulas:
+  task: file.asLink(title)
+  status_icon: 'if(status == "done", "✅ done", if(status == "parked", "🚙 parked", if(status == "active", "🏃 active", status)))'
+properties:
+  formula.task:
+    displayName: Task
+  formula.status_icon:
+    displayName: Status
+  next:
+    displayName: Next step
+  last_done:
+    displayName: Last done
+  pr:
+    displayName: PRs
+views:
+  - type: table
+    name: Open
+    filters:
+      and:
+        - status != "done"
+    order:
+      - formula.task
+      - formula.status_icon
+      - next
+      - pr
+      - file.mtime
+  - type: table
+    name: Done
+    filters:
+      and:
+        - status == "done"
+    order:
+      - formula.task
+      - formula.status_icon
+      - last_done
+      - pr
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC
+  - type: table
+    name: All
+    order:
+      - formula.task
+      - formula.status_icon
+      - next
+      - last_done
+      - pr
+    sort:
+      - property: status
+        direction: ASC
+      - property: file.mtime
+        direction: DESC

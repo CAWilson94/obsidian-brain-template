@@ -6,19 +6,15 @@ goal: Fictional example project. Delete this folder when you are ready.
 ---
 
 # Example-Project
-> [!info] 🗺️ Y'know, what this project is for and where its tasks live.
+> [!info] 🗺️ Y'know, what this project is for and where its tasks live. Tasks are the STATUS.md files in `Active-Work/`.
 
-## 🔗 Links
-> [!note] 🧵 Y'know, the PRs, issues and threads for the whole project. Write them here; the list below is gathered from the tasks.
+## 🔗 GitHub items
+> [!note] 🧵 Y'know, the epic, issues and PRs for the whole project, one row each. Each is a note in `GitHub/`; the Task column links the task that uses it.
 
-<!-- links:start -->
-<!-- links:end -->
+![[Project GitHub.base]]
 
-## 🚦 Tasks in this project
-![[Project Tasks.base]]
-
-## ✅ Finished
-![[Project Finished.base]]
+## 🚦 Tasks
+![[Project All Tasks.base]]
 
 ## 🧠 Notes
 ![[Project Work Notes.base]]

@@ -1,21 +1,33 @@
 filters:
   and:
-    - 'file.ext == "md"'
-    - 'file.inFolder("Projects")'
-    - 'file.name != "STATUS"'
+    - file.ext == "md"
+    - file.inFolder("Projects")
+    - file.name != "STATUS"
+    - '!file.path.contains("/GitHub/")'
 formulas:
-  project: 'file.folder.replace(/^Projects\//, "").replace(/\/.*$/, "")'
+  project: file.folder.replace(/^Projects\//, "").replace(/\/.*$/, "")
 properties:
   formula.project:
     displayName: Project
 views:
   - type: table
     name: Recent work notes
-    limit: 20
+    filters:
+      and:
+        - file.mtime > "2026-11-01"
+    groupBy:
+      property: formula.project
+      direction: ASC
     order:
+      - tags
       - file.name
-      - formula.project
-      - file.mtime
     sort:
+      - property: file.name
+        direction: ASC
+      - property: tags
+        direction: ASC
       - property: file.mtime
         direction: DESC
+  - type: list
+    name: View
+    indentProperties: true

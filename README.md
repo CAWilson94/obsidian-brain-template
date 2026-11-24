@@ -18,6 +18,7 @@ A work brain for [Obsidian](https://obsidian.md) with a Notion-style Home page. 
 | Work on a task | Edit its `STATUS.md` | Home updates (Stop hook, or the optional watcher) |
 | Have a thought | say "log this" | One line goes into today's daily note |
 | End of a session | `/close-out` | Updates the task's `last_done` and `next` once |
+| Parking a task, or passing it to a fresh session | `/handoff` | Writes `HANDOFF-YYYY-MM-DD.md` in the task folder (5-line "Start here", claims labelled verified, inferred or stated) and points `STATUS.md` at it |
 | Home looks messy | `/clean-notes` | Walks through what's in the **🧊 Stuck n' Stale** card |
 | Review a PR | `/cha-generic-review <url>` | Checks it against `rules/review-rules.md`. Posts nothing |
 
@@ -42,7 +43,7 @@ Run with `python3 scripts/brain.py <command>`. Nothing is ever overwritten. **Sk
 | `task "Project" "Title" "goal" ["next"]` | New task from the STATUS template | `/new-project` | | |
 | `finish "Project" "task-folder"` | Move a done task to `Finished-Work/`, fix links | `/clean-notes`, `/close-out` | | sometimes |
 | `log "[finding] text"` | Add a line to today's daily note | "log this" (`log` skill) | | free alternative (no model) |
-| `currentwork` | Refresh the lists on Home | `/new-project`, `/close-out` | the file watcher | rarely |
+| `currentwork` | Refresh the lists on Home | `/new-project`, `/close-out`, `/handoff` | the file watcher | rarely |
 | `check` | Find fields to fix and merged PRs (needs `gh`) | `/clean-notes` | | to refresh GitHub data |
 | `githubnotes` | Make and update the GitHub notes (needs `gh`) | | `auto` runs it in the background | to force a refresh |
 | `auto` | Log `[auto]` lines, refresh Home | | the Stop hook | |

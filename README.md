@@ -62,12 +62,3 @@ Run with `python3 scripts/brain.py <command>`. Nothing is ever overwritten. **Sk
 - `assets/banner.png` is a NASA-style photo. Check its licence before publishing, or swap in your own.
 - This repo holds fictional examples only. Keep real notes in a separate private repo.
 
-## Preview 
-
-### Home Page 
-<img width="1997" height="1407" alt="image" src="https://github.com/user-attachments/assets/da502fa0-2254-4114-b6e7-3344f7bd92e9" />
-
-### Project Home Page 
-<img width="2312" height="1313" alt="image" src="https://github.com/user-attachments/assets/236d4588-8a0f-41c3-a5e5-2d96043ea5a4" />
-
-
